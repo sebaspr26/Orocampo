@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  roleId    String?
+  role      Role?    @relation(fields: [roleId], references: [id])
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductType {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String?
+  minStockKg  Float            @default(10)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  entries     InventoryEntry[]
+}
+
+model InventoryEntry {
+  id            String          @id @default(cuid())
+  productTypeId String
+  productType   ProductType     @relation(fields: [productTypeId], references: [id])
+  batchNumber   String
+  entryDate     DateTime        @default(now())
+  expiryDate    DateTime
+  quantityKg    Float
+  remainingKg   Float
+  purchasePrice Float
+  notes         String?
+  createdById   String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  movements     StockMovement[]
+}
+
+model StockMovement {
+  id          String         @id @default(cuid())
+  entryId     String
+  entry       InventoryEntry @relation(fields: [entryId], references: [id])
+  type        String
+  quantityKg  Float
+  reason      String?
+  createdById String
+  createdAt   DateTime       @default(now())
+}

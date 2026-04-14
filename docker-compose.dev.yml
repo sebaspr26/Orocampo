@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: orocampo_db_dev
+    restart: always
+    environment:
+      POSTGRES_USER: orocampo
+      POSTGRES_PASSWORD: orocampo123
+      POSTGRES_DB: orocampo_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orocampo -d orocampo_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    container_name: orocampo_api_dev
+    restart: always
+    ports:
+      - "4001:4001"
+    environment:
+      DATABASE_URL: postgresql://orocampo:orocampo123@db:5432/orocampo_db
+      JWT_SECRET: orocampo-dev-secret-2024
+      PORT: "4001"
+      NODE_ENV: development
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    container_name: orocampo_web_dev
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      API_URL: http://api:4001
+      JWT_SECRET: orocampo-dev-secret-2024
+      NODE_ENV: development
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+
+volumes:
+  postgres_data_dev:
