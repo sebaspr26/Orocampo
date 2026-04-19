@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export default function LogoutButton() {
+export default function LogoutButton({ iconOnly = false }: { iconOnly?: boolean }) {
   const router = useRouter();
 
   async function handleLogout() {
@@ -11,12 +11,25 @@ export default function LogoutButton() {
     router.refresh();
   }
 
+  if (iconOnly) {
+    return (
+      <button
+        onClick={handleLogout}
+        className="text-stone-400 hover:text-[#ba1a1a] transition-colors p-1"
+        title="Cerrar sesión"
+      >
+        <span className="material-symbols-outlined text-sm">logout</span>
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={handleLogout}
-      className="w-full text-sm text-gray-500 hover:text-gray-700 border border-gray-200 hover:border-gray-300 px-3 py-1.5 rounded-lg transition text-left"
+      className="flex items-center gap-2 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-all w-full"
     >
-      Cerrar sesión
+      <span className="material-symbols-outlined">logout</span>
+      <span className="text-sm">Cerrar Sesión</span>
     </button>
   );
 }

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ORO CAMPO | Roles y Permisos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#d5c5a8",
+                    "outline-variant": "#d0c5af",
+                    "on-primary-fixed-variant": "#574500",
+                    "surface": "#fcf9f8",
+                    "tertiary-fixed": "#f2e0c3",
+                    "surface-container": "#f0eded",
+                    "surface-container-high": "#eae7e7",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-container": "#d4af37",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#e9c349",
+                    "on-tertiary-fixed-variant": "#504530",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "surface-tint": "#735c00",
+                    "background": "#fcf9f8",
+                    "on-primary-container": "#554300",
+                    "secondary": "#5f5e5e",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-container": "#4f442e",
+                    "tertiary": "#695d46",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#e2dfde",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e5e2e1",
+                    "surface-bright": "#fcf9f8",
+                    "primary": "#735c00",
+                    "surface-container-low": "#f6f3f2",
+                    "inverse-surface": "#313030",
+                    "inverse-on-surface": "#f3f0ef",
+                    "secondary-fixed": "#e5e2e1",
+                    "on-primary-fixed": "#241a00",
+                    "inverse-primary": "#e9c349",
+                    "surface-dim": "#dcd9d9",
+                    "surface-variant": "#e5e2e1",
+                    "on-surface": "#1c1b1b",
+                    "on-secondary-container": "#636262",
+                    "on-surface-variant": "#4d4635",
+                    "on-tertiary-fixed": "#231a08",
+                    "primary-fixed": "#ffe088",
+                    "tertiary-container": "#c1b196",
+                    "outline": "#7f7663",
+                    "on-primary": "#ffffff",
+                    "on-background": "#1c1b1b",
+                    "on-secondary-fixed-variant": "#474746",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .matrix-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .matrix-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .matrix-scroll::-webkit-scrollbar-thumb {
+            background: #d0c5af;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-72 rounded-r-[2rem] sticky top-0 left-0 bg-[#fcf9f8] dark:bg-stone-950 flex flex-col gap-2 p-6 h-full shadow-2xl shadow-stone-200/40 dark:shadow-none z-40">
+<div class="flex items-center gap-3 mb-10 px-4">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">agriculture</span>
+</div>
+<div>
+<h1 class="text-xl font-black tracking-tighter text-[#735c00] dark:text-[#d4af37]">ORO CAMPO</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400">Gestión de Administración</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 px-4 py-3 hover:bg-stone-200/30 dark:hover:bg-stone-800/50 transition-all duration-300 flex items-center gap-3 font-['Manrope'] tracking-tight text-sm font-medium" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Panel de Control
+            </a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 px-4 py-3 hover:bg-stone-200/30 dark:hover:bg-stone-800/50 transition-all duration-300 flex items-center gap-3 font-['Manrope'] tracking-tight text-sm font-medium" href="#">
+<span class="material-symbols-outlined">group</span>
+                Usuarios
+            </a>
+<a class="bg-stone-200/50 dark:bg-stone-800 text-[#735c00] dark:text-[#d4af37] font-bold rounded-xl px-4 py-3 flex items-center gap-3 font-['Manrope'] tracking-tight text-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                Roles y Permisos
+            </a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 px-4 py-3 hover:bg-stone-200/30 dark:hover:bg-stone-800/50 transition-all duration-300 flex items-center gap-3 font-['Manrope'] tracking-tight text-sm font-medium" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Configuración
+            </a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 px-4 py-3 hover:bg-stone-200/30 dark:hover:bg-stone-800/50 transition-all duration-300 flex items-center gap-3 font-['Manrope'] tracking-tight text-sm font-medium" href="#">
+<span class="material-symbols-outlined">history</span>
+                Registros
+            </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-stone-200/50">
+<div class="flex items-center gap-3 px-4">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="professional portrait of a manager in a minimal modern setting with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCVc2hBDus2EJP3EbivyXCMFDgoI4_K5j6dompxlcfDAj-HKUP1O3A58YNNohYfpsVfRfPveQkucYSxbR8tAteE2QIpzyvK4cdtJMNUT1A8gp4wD7ka6X1BxGZA2QZiEEo6_u4WSXOyj107YI3z3BxmdXAaKoNYB7vDy4Ufzyf8uVPcWm0EBTPtX-q3_Tf3keV_PpNrcwzdorKSQ-ub81BOMR8e2oKIniPlCklUVTm3Hw8dG-FkWkKaiHpN2Gl3tEEL6p8UIcX"/>
+<div>
+<p class="text-sm font-bold text-stone-900">Admin User</p>
+<p class="text-xs text-stone-500">Super Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-h-screen max-h-screen overflow-hidden">
+<!-- TopAppBar Component -->
+<header class="w-full sticky top-0 z-50 bg-[#fcf9f8]/80 dark:bg-stone-950/80 backdrop-blur-xl flex items-center justify-between px-10 py-5 w-full">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-stone-400">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-3 pl-12 pr-6 text-xs uppercase tracking-widest font-semibold text-stone-900 focus:ring-2 focus:ring-[#d4af37]/50 transition-all" placeholder="BUSCAR PERMISOS O ROLES..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-stone-400 hover:text-stone-900 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="text-stone-400 hover:text-stone-900 transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-stone-200 mx-2"></div>
+<div class="flex items-center gap-2">
+<span class="font-headline text-sm font-bold text-stone-900">ORO CAMPO</span>
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden p-8 gap-8">
+<!-- Left Column: Roles List -->
+<section class="w-80 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h2 class="font-headline text-2xl font-extrabold tracking-tight">Roles</h2>
+<button class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<div class="flex flex-col gap-4 overflow-y-auto pr-2 matrix-scroll">
+<!-- Admin Role -->
+<div class="p-5 rounded-2xl bg-primary-container shadow-xl shadow-primary-container/20 group cursor-pointer border border-primary/20">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-on-primary-container">Admin</span>
+<span class="material-symbols-outlined text-on-primary-container/60 text-sm">more_vert</span>
+</div>
+<p class="text-xs text-on-primary-container/80 leading-relaxed font-medium">Acceso total al sistema, gestión de configuraciones y usuarios.</p>
+<div class="mt-4 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] bg-white/30 text-on-primary-container uppercase font-bold tracking-tighter">Predeterminado</span>
+</div>
+</div>
+<!-- Secretary Role -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest hover:bg-surface-container-low transition-all group cursor-pointer border border-transparent hover:border-stone-200">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-stone-900">Secretaría</span>
+<span class="material-symbols-outlined text-stone-400 text-sm opacity-0 group-hover:opacity-100">more_vert</span>
+</div>
+<p class="text-xs text-stone-500 leading-relaxed">Maneja tareas administrativas diarias, facturación y seguimiento de inventario.</p>
+</div>
+<!-- Delivery Role -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest hover:bg-surface-container-low transition-all group cursor-pointer border border-transparent hover:border-stone-200">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-stone-900">Entrega</span>
+<span class="material-symbols-outlined text-stone-400 text-sm opacity-0 group-hover:opacity-100">more_vert</span>
+</div>
+<p class="text-xs text-stone-500 leading-relaxed">Acceso a la gestión de rutas y estado de cumplimiento de pedidos.</p>
+</div>
+<!-- Inventory Manager -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest hover:bg-surface-container-low transition-all group cursor-pointer border border-transparent hover:border-stone-200">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline font-bold text-stone-900">Gestor de Inventario</span>
+<span class="material-symbols-outlined text-stone-400 text-sm opacity-0 group-hover:opacity-100">more_vert</span>
+</div>
+<p class="text-xs text-stone-500 leading-relaxed">Control total sobre niveles de stock, lotes y registros de proveedores.</p>
+</div>
+</div>
+</section>
+<!-- Right Column: Permission Matrix -->
+<section class="flex-1 bg-surface-container-low rounded-[2.5rem] flex flex-col shadow-inner overflow-hidden border border-white/50">
+<!-- Header of the Matrix Area -->
+<div class="px-10 py-8 bg-surface-container-lowest flex items-center justify-between">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-headline text-xl font-extrabold text-stone-900">Matriz de Permisos</h3>
+<span class="text-xs font-bold px-2 py-0.5 bg-primary-container/20 text-primary rounded-full uppercase tracking-tighter">Editando Admin</span>
+</div>
+<p class="text-sm text-stone-500">Ajuste fino del acceso funcional para este grupo de usuarios.</p>
+</div>
+<div class="flex items-center gap-6 bg-surface-container-low px-6 py-3 rounded-2xl">
+<span class="text-sm font-bold text-stone-700">Acceso Total</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Matrix Content -->
+<div class="flex-1 overflow-y-auto p-10 matrix-scroll">
+<div class="grid grid-cols-1 gap-12">
+<!-- Module: Users -->
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-stone-200/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-stone-600">group</span>
+</div>
+<h4 class="font-headline font-bold text-stone-900 uppercase tracking-widest text-sm">Usuarios y Acceso</h4>
+<div class="flex-1 h-[1px] bg-stone-200/60"></div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+<div class="bg-surface-container-lowest p-5 rounded-[1.5rem] flex flex-col gap-4 border border-stone-100 shadow-sm">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-stone-800">Crear Usuarios</span>
+<input checked="" class="w-5 h-5 rounded border-stone-300 text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+<p class="text-[10px] text-stone-400 uppercase tracking-tighter">Puede agregar nuevos miembros del personal</p>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-[1.5rem] flex flex-col gap-4 border border-stone-100 shadow-sm">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-stone-800">Editar Perfiles</span>
+<input checked="" class="w-5 h-5 rounded border-stone-300 text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+<p class="text-[10px] text-stone-400 uppercase tracking-tighter">Modificar detalles de usuario y roles</p>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-[1.5rem] flex flex-col gap-4 border border-stone-100 shadow-sm opacity-60">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-stone-800">Eliminar Usuarios</span>
+<input class="w-5 h-5 rounded border-stone-300 text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+<p class="text-[10px] text-stone-400 uppercase tracking-tighter">Eliminar cuentas permanentemente</p>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-[1.5rem] flex flex-col gap-4 border border-stone-100 shadow-sm">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-stone-800">Registros de Auditoría</span>
+<input checked="" class="w-5 h-5 rounded border-stone-300 text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+<p class="text-[10px] text-stone-400 uppercase tracking-tighter">Ver registros de actividad de seguridad</p>
+</div>
+</div>
+</div>
+<!-- Module: Inventory -->
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-stone-200/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-stone-600">inventory_2</span>
+</div>
+<h4 class="font-headline font-bold text-stone-900 uppercase tracking-widest text-sm">Stock e Inventario</h4>
+<div class="flex-1 h-[1px] bg-stone-200/60"></div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-lowest p-5 rounded-[1.5rem] flex flex-col gap-4 border border-stone-100 shadow-sm">
+<div class="flex justify-between items-center">
+<span class="text-xs font-bold text-stone-800">Catálogo de Productos</span>
+<input checked="" class="w-5 h-5 rounded border-stone-300 text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+<p class="text-[10px] text-stone-400 uppercase tracking-tighter">Gestionar productos lácteos y precios</p>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-[1.5rem] flex items-center gap-4 border border-stone-100 shadow-sm relative overflow-hidden group">
+<div class="flex-1">
+<span class="text-xs font-bold text-stone-800">Control de Lotes</span>
+<p class="text-[10px] text-stone-400 uppercase tracking-tighter mt-1">Calidad y Fechas de Venc.</p>
+</div>
+<input checked="" class="w-5 h-5 rounded border-stone-300 text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+<div class="bg-primary/5 p-5 rounded-[1.5rem] flex items-center gap-4 border border-primary/10 shadow-sm">
+<div class="flex-1">
+<span class="text-xs font-bold text-primary">Ajuste de Stock</span>
+<p class="text-[10px] text-primary/60 uppercase tracking-tighter mt-1">Ajustes Manuales</p>
+</div>
+<input checked="" class="w-5 h-5 rounded border-primary text-primary focus:ring-primary/20" type="checkbox"/>
+</div>
+</div>
+</div>
+<!-- Module: Routes -->
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-stone-200/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-stone-600">local_shipping</span>
+</div>
+<h4 class="font-headline font-bold text-stone-900 uppercase tracking-widest text-sm">Logística y Rutas</h4>
+<div class="flex-1 h-[1px] bg-stone-200/60"></div>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-[2rem] flex flex-col gap-6 border border-stone-100 shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<h5 class="text-sm font-bold text-stone-900">Planificación de Rutas</h5>
+<p class="text-xs text-stone-500">Diseñar rutas de entrega diarias</p>
+</div>
+<input checked="" class="w-6 h-6 rounded-md border-stone-300 text-primary" type="checkbox"/>
+</div>
+<div class="flex gap-4">
+<span class="px-3 py-1 rounded-full bg-stone-100 text-[10px] font-bold text-stone-400 uppercase">Geovallas</span>
+<span class="px-3 py-1 rounded-full bg-stone-100 text-[10px] font-bold text-stone-400 uppercase">Seguimiento GPS</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-[2rem] flex flex-col gap-6 border border-stone-100 shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<h5 class="text-sm font-bold text-stone-900">Gestión de Flota</h5>
+<p class="text-xs text-stone-500">Gestionar el estado de los vehículos</p>
+</div>
+<input checked="" class="w-6 h-6 rounded-md border-stone-300 text-primary" type="checkbox"/>
+</div>
+<div class="flex gap-4">
+<span class="px-3 py-1 rounded-full bg-stone-100 text-[10px] font-bold text-stone-400 uppercase">Registros de Combustible</span>
+<span class="px-3 py-1 rounded-full bg-stone-100 text-[10px] font-bold text-stone-400 uppercase">Mantenimiento</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer: Save Changes -->
+<div class="px-10 py-6 bg-surface-container-highest flex items-center justify-between border-t border-stone-200">
+<p class="text-xs text-stone-500 font-medium">Última actualización por <span class="font-bold text-stone-900 underline">Super Admin</span> el 24 oct, 2023</p>
+<div class="flex items-center gap-4">
+<button class="px-8 py-3 rounded-full text-stone-600 font-headline font-bold text-sm hover:bg-stone-200 transition-colors">Descartar</button>
+<button class="px-10 py-3 rounded-full bg-gradient-to-r from-primary to-primary-container text-white font-headline font-extrabold text-sm shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
+                            Guardar Cambios
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Right Side Overlay Badge (Signature Component: Batch Card) -->
+<div class="fixed top-1/2 -right-4 -translate-y-1/2 rotate-90 origin-right">
+<div class="bg-primary text-on-primary px-8 py-3 rounded-t-3xl shadow-2xl flex items-center gap-4 border-l-4 border-primary-container">
+<span class="text-[10px] font-black uppercase tracking-[0.3em]">Estado del Sistema: 98%</span>
+<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+</div>
+</div>
+</body></html>

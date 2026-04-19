@@ -7,6 +7,7 @@ export default function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -14,21 +15,17 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.error ?? "Correo o contraseña incorrectos");
         return;
       }
-
       router.push("/dashboard");
       router.refresh();
     } catch {
@@ -39,49 +36,73 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+        <div className="bg-[#ffdad6] border border-[#ba1a1a]/20 text-[#93000a] text-sm px-4 py-3 rounded-2xl flex items-center gap-2">
+          <span className="material-symbols-outlined text-sm">error</span>
           {error}
         </div>
       )}
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Correo electrónico
+      {/* Email */}
+      <div className="space-y-2">
+        <label className="block text-[10px] font-bold uppercase tracking-widest text-[#7f7663] px-1">
+          Correo institucional
         </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="correo@ejemplo.com"
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
-        />
+        <div className="relative group">
+          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#7f7663] text-lg transition-colors group-focus-within:text-[#735c00]">mail</span>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="admin@orocampo.com"
+            className="w-full pl-12 pr-4 py-4 bg-[#f6f3f2] border-none rounded-2xl text-[#1c1b1b] placeholder:text-[#d0c5af] focus:outline-none focus:ring-1 focus:ring-[#d4af37] transition-all text-sm"
+          />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Contraseña
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          placeholder="••••••••"
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
-        />
+      {/* Password */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-center px-1">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-[#7f7663]">
+            Contraseña
+          </label>
+        </div>
+        <div className="relative group">
+          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#7f7663] text-lg transition-colors group-focus-within:text-[#735c00]">lock</span>
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="••••••••••••"
+            className="w-full pl-12 pr-12 py-4 bg-[#f6f3f2] border-none rounded-2xl text-[#1c1b1b] placeholder:text-[#d0c5af] focus:outline-none focus:ring-1 focus:ring-[#d4af37] transition-all text-sm"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7f7663] hover:text-[#1c1b1b] transition-colors"
+          >
+            <span className="material-symbols-outlined text-lg">
+              {showPassword ? "visibility_off" : "visibility"}
+            </span>
+          </button>
+        </div>
       </div>
 
+      {/* Submit */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white font-semibold py-2.5 px-4 rounded-lg transition text-sm"
+        className="w-full editorial-gradient py-5 rounded-full text-white font-extrabold text-sm tracking-widest uppercase shadow-xl shadow-[#d4af37]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+        style={{ fontFamily: 'var(--font-manrope), sans-serif' }}
       >
-        {loading ? "Ingresando..." : "Ingresar"}
+        <span>{loading ? "Verificando..." : "Ingresar al Sistema"}</span>
+        {!loading && <span className="material-symbols-outlined text-lg">arrow_forward</span>}
+        {loading && <span className="material-symbols-outlined text-lg animate-spin">progress_activity</span>}
       </button>
     </form>
   );

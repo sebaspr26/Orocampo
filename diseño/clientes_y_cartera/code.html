@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clientes y Cartera - ORO CAMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#1c1b1b",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#504530",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#e2dfde",
+                        "surface": "#fcf9f8",
+                        "surface-bright": "#fcf9f8",
+                        "on-primary-fixed-variant": "#574500",
+                        "tertiary-fixed": "#f2e0c3",
+                        "surface-container": "#f0eded",
+                        "on-primary-fixed": "#241a00",
+                        "surface-dim": "#dcd9d9",
+                        "on-surface-variant": "#4d4635",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-tertiary-fixed": "#231a08",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#d4af37",
+                        "on-tertiary-container": "#4f442e",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-fixed-dim": "#d5c5a8",
+                        "surface-tint": "#735c00",
+                        "inverse-on-surface": "#f3f0ef",
+                        "surface-container-high": "#eae7e7",
+                        "primary-fixed-dim": "#e9c349",
+                        "primary-fixed": "#ffe088",
+                        "outline": "#7f7663",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#636262",
+                        "tertiary": "#695d46",
+                        "surface-variant": "#e5e2e1",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1c1b1b",
+                        "primary": "#735c00",
+                        "on-primary-container": "#554300",
+                        "outline-variant": "#d0c5af",
+                        "tertiary-container": "#c1b196",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#e5e2e1",
+                        "inverse-primary": "#e9c349",
+                        "background": "#fcf9f8",
+                        "secondary": "#5f5e5e",
+                        "inverse-surface": "#313030",
+                        "surface-container-low": "#f6f3f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col bg-[#fcf9f8] dark:bg-[#1c1b1b] border-r border-[#1c1b1b]/5 z-50">
+<div class="flex flex-col gap-2 p-6 h-full">
+<div class="mb-8">
+<h1 class="font-['Manrope'] font-bold text-xl text-[#735c00]">ORO CAMPO</h1>
+<p class="text-xs text-on-surface-variant font-medium tracking-wide">Distribución Premium</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl hover:translate-x-1 transition-all duration-300 font-['Inter'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl hover:translate-x-1 transition-all duration-300 font-['Inter'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Inventario</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl hover:translate-x-1 transition-all duration-300 font-['Inter'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Ventas</span>
+</a>
+<!-- Active Item: Clientes -->
+<a class="flex items-center gap-3 px-4 py-3 bg-[#d4af37] text-white rounded-xl shadow-lg shadow-[#d4af37]/20 font-bold font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl hover:translate-x-1 transition-all duration-300 font-['Inter'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Pagos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl hover:translate-x-1 transition-all duration-300 font-['Inter'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Reportes</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/20 space-y-1">
+<button class="w-full flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-all font-['Inter'] font-medium text-sm">
+<span class="material-symbols-outlined">settings</span>
+<span>Ajustes</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-error hover:bg-error/5 rounded-xl transition-all font-['Inter'] font-medium text-sm">
+<span class="material-symbols-outlined">logout</span>
+<span>Cerrar Sesión</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-8 h-16 sticky top-0 bg-[#fcf9f8]/80 backdrop-blur-md z-40">
+<div class="flex items-center gap-4">
+<span class="font-['Manrope'] tracking-tight font-bold text-lg text-[#735c00]">Gestión de Cartera</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#1c1b1b]/60 cursor-pointer hover:text-primary transition-colors">notifications</span>
+<div class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-surface"></div>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden border-2 border-primary-container/20 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Portrait of a professional dairy distribution manager in a clean business casual outfit with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnvZOxEFlXBvAJCYbp0_8vZzNkJz0dcnUFO5ZF867NK5d8GE9roJY72ZdwkJbNXmkUEyejMXivzq8TVLeCTY9gheijwoBMLrEfYd_DS78OenkwrcmLyfQfpYtR2Ga4GmM5_BonHMToJvVJlCnrHyAW3CTbP6O-GRssAbWNMAk19sWCzSeIH9Y2eo_gGEuHDXoMGW3XjxfbYrENdZj7wySM1TxhgJ2RbItlOxaHJCNci1JD4erRhRn0qlr79uPo20--EvarDq3G"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 space-y-8">
+<!-- Header & Summary Section (Bento Grid Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Main Header Card -->
+<div class="md:col-span-2 bg-surface-container-low p-8 rounded-[2rem] flex flex-col justify-between overflow-hidden relative border-none">
+<div class="relative z-10">
+<span class="text-xs font-bold text-primary tracking-widest uppercase mb-2 block">Resumen General</span>
+<h2 class="text-4xl font-extrabold text-on-surface tracking-tighter mb-4 headline">Cartera de Clientes</h2>
+<p class="text-on-surface-variant max-w-md leading-relaxed">Supervise el estado de sus cuentas, gestione deudas pendientes y mantenga la salud financiera de su red de distribución.</p>
+</div>
+<div class="flex gap-4 mt-8 relative z-10">
+<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-base">add</span>
+<span>Nuevo Cliente</span>
+</button>
+<button class="bg-surface-container-highest text-on-surface px-6 py-3 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-base">file_download</span>
+<span>Exportar Datos</span>
+</button>
+</div>
+<!-- Decorative Element -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-primary-container/20 rounded-full blur-3xl"></div>
+</div>
+<!-- Metrics Card -->
+<div class="bg-primary-container p-8 rounded-[2rem] text-on-primary-container shadow-xl shadow-primary-container/20 border-none">
+<div class="flex justify-between items-start mb-12">
+<div class="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
+<span class="material-symbols-outlined text-3xl">trending_up</span>
+</div>
+<span class="text-xs font-bold bg-white/20 px-2 py-1 rounded-md">Vence Hoy</span>
+</div>
+<div>
+<span class="text-sm font-medium opacity-80 block mb-1">Total Por Cobrar</span>
+<div class="text-4xl font-black headline tracking-tighter">$142,500.00</div>
+<p class="text-xs mt-4 font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">warning</span> 
+                            12 Clientes en mora
+                        </p>
+</div>
+</div>
+</div>
+<!-- Customer List & Detail Split (Editorial Layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left: Interactive Customer List -->
+<div class="lg:col-span-5 space-y-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xl font-bold tracking-tight headline">Listado de Clientes</h3>
+<div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant/10">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm p-0 w-32 placeholder-on-surface-variant/50" placeholder="Buscar..." type="text"/>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Customer Item (Active/Focused) -->
+<div class="group bg-surface-container-lowest p-5 rounded-2xl border-none shadow-sm hover:translate-x-2 transition-all cursor-pointer relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center font-bold text-primary">DP</div>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">Distribuidora Pancho</h4>
+<p class="text-xs text-on-surface-variant">Francisco Soler • +54 11 4920-3321</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-error bg-error/10 px-2 py-0.5 rounded uppercase tracking-wider mb-1 inline-block">Mora 15d</span>
+<div class="font-bold text-on-surface">$24,800.00</div>
+</div>
+</div>
+</div>
+<!-- Customer Item -->
+<div class="group bg-surface-container p-5 rounded-2xl border-none hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center font-bold text-on-secondary-container">ML</div>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">Mercadito de Liniers</h4>
+<p class="text-xs text-on-surface-variant">María López • +54 11 5562-1100</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded uppercase tracking-wider mb-1 inline-block">Al Día</span>
+<div class="font-bold text-on-surface">$3,150.00</div>
+</div>
+</div>
+</div>
+<!-- Customer Item -->
+<div class="group bg-surface-container p-5 rounded-2xl border-none hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center font-bold text-on-secondary-container">LA</div>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">Lácteos Avellaneda</h4>
+<p class="text-xs text-on-surface-variant">Lucas Alderete • +54 11 3221-4433</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-error bg-error/10 px-2 py-0.5 rounded uppercase tracking-wider mb-1 inline-block">Mora 5d</span>
+<div class="font-bold text-on-surface">$12,400.00</div>
+</div>
+</div>
+</div>
+<!-- Customer Item -->
+<div class="group bg-surface-container p-5 rounded-2xl border-none hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center font-bold text-on-secondary-container">SM</div>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">Supermercado Myriam</h4>
+<p class="text-xs text-on-surface-variant">Myriam Gómez • +54 11 6770-0022</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded uppercase tracking-wider mb-1 inline-block">Al Día</span>
+<div class="font-bold text-on-surface">$0.00</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Detailed View Area -->
+<div class="lg:col-span-7 bg-surface-container-lowest rounded-[2.5rem] p-10 border border-outline-variant/5 shadow-2xl shadow-on-surface/5 relative overflow-hidden">
+<!-- Detail Header -->
+<div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-error/10 text-error text-[10px] font-black px-2 py-0.5 rounded tracking-widest uppercase">Crédito Excedido</span>
+<span class="text-xs font-medium text-on-surface-variant">ID: CL-2944</span>
+</div>
+<h2 class="text-3xl font-black headline text-on-surface mb-1">Distribuidora Pancho</h2>
+<p class="text-on-surface-variant flex items-center gap-1 italic">
+<span class="material-symbols-outlined text-sm">location_on</span> Calle 14, Berazategui, Buenos Aires
+                            </p>
+</div>
+<div class="flex gap-3">
+<button class="bg-primary-container text-on-primary-container px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined text-base">payments</span>
+<span>Registrar Pago</span>
+</button>
+<button class="bg-surface-container text-on-surface px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-base">description</span>
+<span>Estado de Cuenta</span>
+</button>
+</div>
+</div>
+<!-- Financial Summary Overlap Card -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-1 mb-12 rounded-3xl overflow-hidden border border-outline-variant/20">
+<div class="bg-surface-container-low p-6 flex flex-col items-center text-center">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Deuda Pendiente</span>
+<span class="text-2xl font-black text-error">$24,800</span>
+</div>
+<div class="bg-surface-container-low p-6 flex flex-col items-center text-center border-x border-outline-variant/20">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Límite de Crédito</span>
+<span class="text-2xl font-black text-on-surface">$20,000</span>
+</div>
+<div class="bg-surface-container-low p-6 flex flex-col items-center text-center">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Último Pago</span>
+<span class="text-2xl font-black text-primary">$5,200</span>
+<span class="text-[10px] text-on-surface-variant mt-1">12 May, 2024</span>
+</div>
+</div>
+<!-- History Tabs -->
+<div class="space-y-6">
+<div class="flex items-center gap-8 border-b border-outline-variant/20 pb-4">
+<button class="text-sm font-bold text-primary border-b-2 border-primary pb-4 -mb-4 px-1">Historial de Compras</button>
+<button class="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors">Pagos Realizados</button>
+<button class="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors">Notas de Crédito</button>
+</div>
+<!-- Data List (No Divider rule applied: use spacing/tone) -->
+<div class="space-y-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low/50 rounded-2xl hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-white rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-primary">receipt</span>
+</div>
+<div>
+<div class="text-sm font-bold">Pedido #88219</div>
+<div class="text-xs text-on-surface-variant">24 de Mayo, 2024 • 12 Items</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-black text-on-surface">$8,450.00</div>
+<span class="text-[10px] font-bold text-error">PENDIENTE</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low/50 rounded-2xl hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-white rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-primary">receipt</span>
+</div>
+<div>
+<div class="text-sm font-bold">Pedido #88102</div>
+<div class="text-xs text-on-surface-variant">18 de Mayo, 2024 • 42 Items</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-black text-on-surface">$16,350.00</div>
+<span class="text-[10px] font-bold text-error">PENDIENTE</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low/50 rounded-2xl hover:bg-surface-container-low transition-colors opacity-70">
+<div class="flex items-center gap-4">
+<div class="p-2 bg-white rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+</div>
+<div>
+<div class="text-sm font-bold">Pedido #87950</div>
+<div class="text-xs text-on-surface-variant">10 de Mayo, 2024 • 8 Items</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-black text-on-surface">$5,200.00</div>
+<span class="text-[10px] font-bold text-primary">PAGADO</span>
+</div>
+</div>
+</div>
+<button class="w-full py-4 text-sm font-bold text-primary-container bg-primary/5 rounded-2xl hover:bg-primary/10 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                            Ver reporte histórico completo
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Aesthetic Background Accent -->
+<div class="absolute top-0 right-0 p-8">
+<span class="material-symbols-outlined text-primary/10 text-9xl select-none pointer-events-none">group</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

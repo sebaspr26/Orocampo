@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ventas y Facturación | ORO CAMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#1c1b1b",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#504530",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#e2dfde",
+                    "surface": "#fcf9f8",
+                    "surface-bright": "#fcf9f8",
+                    "on-primary-fixed-variant": "#574500",
+                    "tertiary-fixed": "#f2e0c3",
+                    "surface-container": "#f0eded",
+                    "on-primary-fixed": "#241a00",
+                    "surface-dim": "#dcd9d9",
+                    "on-surface-variant": "#4d4635",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-tertiary-fixed": "#231a08",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#d4af37",
+                    "on-tertiary-container": "#4f442e",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "tertiary-fixed-dim": "#d5c5a8",
+                    "surface-tint": "#735c00",
+                    "inverse-on-surface": "#f3f0ef",
+                    "surface-container-high": "#eae7e7",
+                    "primary-fixed-dim": "#e9c349",
+                    "primary-fixed": "#ffe088",
+                    "outline": "#7f7663",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#636262",
+                    "tertiary": "#695d46",
+                    "surface-variant": "#e5e2e1",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#1c1b1b",
+                    "primary": "#735c00",
+                    "on-primary-container": "#554300",
+                    "outline-variant": "#d0c5af",
+                    "tertiary-container": "#c1b196",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#e5e2e1",
+                    "inverse-primary": "#e9c349",
+                    "background": "#fcf9f8",
+                    "secondary": "#5f5e5e",
+                    "inverse-surface": "#313030",
+                    "surface-container-low": "#f6f3f2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .batch-card-overlap {
+            margin-top: -2rem;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container/30">
+<!-- Top Navigation Bar -->
+<header class="bg-[#fcf9f8]/80 backdrop-blur-md dark:bg-[#1c1b1b]/80 flex justify-between items-center w-full px-8 h-16 sticky top-0 docked full-width z-40 shadow-sm dark:shadow-none">
+<div class="flex items-center gap-8">
+<span class="font-['Manrope'] font-black text-2xl tracking-tighter text-[#735c00] dark:text-[#d4af37]">ORO CAMPO</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#1c1b1b]/60 font-['Manrope'] tracking-tight font-bold text-lg hover:bg-[#d4af37]/10 transition-colors px-2" href="#">Dashboard</a>
+<a class="text-[#735c00] font-bold border-b-2 border-[#d4af37] font-['Manrope'] tracking-tight text-lg" href="#">Ventas</a>
+<a class="text-[#1c1b1b]/60 font-['Manrope'] tracking-tight font-bold text-lg hover:bg-[#d4af37]/10 transition-colors px-2" href="#">Inventario</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#d4af37]/10 text-[#735c00] transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-[#d4af37]/10 text-[#735c00] transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img alt="Foto de perfil del administrador" data-alt="close-up portrait of a professional male administrator in a clean modern office setting with warm natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxjwnJpJ9vqeqd2HI24cYwFPPJqZoxmPH9GHpSvsakE-IpCvuLC46P5RWq_x4h-Bjxx82FSx2CvAlxJefUWgW5_GCG_iwb7LkaVZjwsF0rMGvVmA4q8JiP94flCMDWJU_Z1vgWXFmb3d0td6yfJuneAtfx64Lxpr8vQ6WaGTRKfEkg1EPAYZbv-ZbDF4Be109jZ9mOEcAi8NMdpgjl8y0IjdKDl2_CH9Re9tiV4IXx4ys30vp8VmxnLbdF612eIGofL_AafiZd"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-4rem)]">
+<!-- Side Navigation Bar -->
+<aside class="hidden md:flex flex-col gap-2 p-6 border-r border-[#1c1b1b]/5 h-[calc(100vh-4rem)] w-64 fixed left-0 bg-[#fcf9f8] dark:bg-[#1c1b1b]">
+<div class="mb-8">
+<p class="font-['Inter'] font-medium text-sm text-[#735c00]/60 uppercase tracking-widest px-4">Menu Principal</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl cursor-pointer transition-all hover:translate-x-1 duration-300">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Inter'] font-medium text-sm">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl cursor-pointer transition-all hover:translate-x-1 duration-300">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-['Inter'] font-medium text-sm">Inventario</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 bg-[#d4af37] text-white rounded-xl shadow-lg shadow-[#d4af37]/20 font-bold cursor-pointer transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-['Inter'] font-medium text-sm">Ventas</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl cursor-pointer transition-all hover:translate-x-1 duration-300">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Inter'] font-medium text-sm">Clientes</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl cursor-pointer transition-all hover:translate-x-1 duration-300">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['Inter'] font-medium text-sm">Pagos</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl cursor-pointer transition-all hover:translate-x-1 duration-300">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] font-medium text-sm">Reportes</span>
+</div>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/10 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl cursor-pointer transition-all">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] font-medium text-sm">Ajustes</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-error/80 hover:bg-error/5 rounded-xl cursor-pointer transition-all">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-['Inter'] font-medium text-sm">Cerrar Sesión</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-8 bg-surface-container-low min-h-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-2 block font-label">Gestión Comercial</span>
+<h1 class="text-5xl font-headline font-extrabold text-on-surface tracking-tight">Ventas y Facturación</h1>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                    Nueva Venta
+                </button>
+</div>
+<!-- Bento Grid Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<div class="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 flex flex-col justify-between h-40">
+<span class="material-symbols-outlined text-primary-container text-3xl">trending_up</span>
+<div>
+<p class="text-on-surface-variant text-sm font-medium">Ventas del Mes</p>
+<p class="text-3xl font-headline font-bold text-on-surface">$124,500.00</p>
+</div>
+</div>
+<div class="bg-primary-container p-6 rounded-3xl flex flex-col justify-between h-40">
+<span class="material-symbols-outlined text-white text-3xl">pending_actions</span>
+<div>
+<p class="text-white/80 text-sm font-medium">Facturas Pendientes</p>
+<p class="text-3xl font-headline font-bold text-white">18</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 flex flex-col justify-between h-40">
+<span class="material-symbols-outlined text-primary-container text-3xl">groups</span>
+<div>
+<p class="text-on-surface-variant text-sm font-medium">Clientes Activos</p>
+<p class="text-3xl font-headline font-bold text-on-surface">432</p>
+</div>
+</div>
+<div class="bg-on-surface p-6 rounded-3xl flex flex-col justify-between h-40">
+<span class="material-symbols-outlined text-primary-container text-3xl">verified</span>
+<div>
+<p class="text-white/60 text-sm font-medium">Ratio de Cobro</p>
+<p class="text-3xl font-headline font-bold text-white">98.4%</p>
+</div>
+</div>
+</div>
+<!-- Content Area: Tables & Filters -->
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Main Table Section -->
+<div class="flex-grow bg-surface-container-lowest rounded-[2rem] overflow-hidden border border-outline-variant/10">
+<!-- Filters Header -->
+<div class="p-8 border-b border-outline-variant/10 flex flex-wrap gap-4 items-center justify-between">
+<div class="flex items-center gap-4 flex-1 min-w-[300px]">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary-container/30 transition-all placeholder:text-on-surface-variant/60" placeholder="Buscar por cliente o factura..." type="text"/>
+</div>
+<button class="bg-surface-container-high px-4 py-3 rounded-2xl flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">calendar_month</span>
+                                Fecha
+                            </button>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<!-- Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 font-headline font-bold text-xs uppercase tracking-wider text-on-surface-variant">Factura</th>
+<th class="px-8 py-5 font-headline font-bold text-xs uppercase tracking-wider text-on-surface-variant">Fecha</th>
+<th class="px-8 py-5 font-headline font-bold text-xs uppercase tracking-wider text-on-surface-variant">Cliente</th>
+<th class="px-8 py-5 font-headline font-bold text-xs uppercase tracking-wider text-on-surface-variant">Productos</th>
+<th class="px-8 py-5 font-headline font-bold text-xs uppercase tracking-wider text-on-surface-variant text-right">Total</th>
+<th class="px-8 py-5 font-headline font-bold text-xs uppercase tracking-wider text-on-surface-variant">Estado</th>
+<th class="px-8 py-5 font-headline font-bold text-xs uppercase tracking-wider text-on-surface-variant"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-8 py-6 font-headline font-bold text-on-surface">#FAC-2024-001</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">24 Oct 2023</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-container font-bold text-xs">RM</div>
+<span class="font-medium">Restaurante Mar y Tierra</span>
+</div>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">Lácteos Premium (x4), Quesos...</td>
+<td class="px-8 py-6 font-headline font-bold text-right text-primary">$1,250.00</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-700"></span>
+                                            Pagado
+                                        </span>
+</td>
+<td class="px-8 py-6 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-primary hover:underline font-bold text-xs tracking-tight">VER DETALLE</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-8 py-6 font-headline font-bold text-on-surface">#FAC-2024-002</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">23 Oct 2023</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-xs">LC</div>
+<span class="font-medium">Lácteos El Campo</span>
+</div>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">Mantequilla Artesanal (x10)</td>
+<td class="px-8 py-6 font-headline font-bold text-right text-primary">$450.25</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
+<span class="w-1.5 h-1.5 rounded-full bg-yellow-700"></span>
+                                            Pendiente
+                                        </span>
+</td>
+<td class="px-8 py-6 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-primary hover:underline font-bold text-xs tracking-tight">VER DETALLE</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-8 py-6 font-headline font-bold text-on-surface">#FAC-2024-003</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">22 Oct 2023</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-bold text-xs">HT</div>
+<span class="font-medium">Hotel Terraza</span>
+</div>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">Leche Entera (x50), Cremas...</td>
+<td class="px-8 py-6 font-headline font-bold text-right text-primary">$3,890.00</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-error-container text-error">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                            Vencido
+                                        </span>
+</td>
+<td class="px-8 py-6 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-primary hover:underline font-bold text-xs tracking-tight">VER DETALLE</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-6 border-t border-outline-variant/10 flex items-center justify-between">
+<span class="text-sm text-on-surface-variant">Mostrando 1-10 de 128 ventas</span>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant/20 hover:bg-surface-container-low">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary-container text-white font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant/20 hover:bg-surface-container-low">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant/20 hover:bg-surface-container-low">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Invoice Preview Sidepanel (Modal-like behavior within layout) -->
+<div class="w-full lg:w-[400px] bg-white rounded-[2rem] shadow-2xl shadow-on-surface/5 flex flex-col border border-outline-variant/10">
+<div class="p-8 border-b border-outline-variant/10 flex items-center justify-between">
+<h2 class="font-headline font-extrabold text-xl">Vista Previa</h2>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<div class="p-8 space-y-8 flex-grow">
+<!-- Invoice Header -->
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<p class="font-headline font-black text-2xl text-primary tracking-tighter">ORO CAMPO</p>
+<p class="text-[10px] text-on-surface-variant leading-tight">Distrito Industrial 45, Edif B.<br/>Quito, Ecuador</p>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Factura</p>
+<p class="font-headline font-bold text-lg">#2024-001</p>
+</div>
+</div>
+<!-- Invoice Info -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mb-1">Facturado a:</p>
+<p class="text-sm font-bold leading-tight">Restaurante Mar y Tierra</p>
+<p class="text-[10px] text-on-surface-variant leading-tight">Av. Principal 123<br/>RUC: 1792345678001</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mb-1">Fecha Emisión:</p>
+<p class="text-sm font-bold leading-tight">24 de Octubre, 2023</p>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mt-4 mb-1">Fecha Venc.:</p>
+<p class="text-sm font-bold leading-tight">08 de Noviembre, 2023</p>
+</div>
+</div>
+<!-- Item List -->
+<div class="space-y-4">
+<div class="flex justify-between items-center text-[10px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline-variant/10 pb-2">
+<span>Descripción</span>
+<span>Total</span>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold">Lácteo Premium Entero</p>
+<p class="text-[10px] text-on-surface-variant">4 unidades x $120.00</p>
+</div>
+<p class="text-xs font-bold">$480.00</p>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold">Queso Artesanal Maduro</p>
+<p class="text-[10px] text-on-surface-variant">12 unidades x $45.00</p>
+</div>
+<p class="text-xs font-bold">$540.00</p>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold">Mantequilla de Campo</p>
+<p class="text-[10px] text-on-surface-variant">10 unidades x $23.00</p>
+</div>
+<p class="text-xs font-bold">$230.00</p>
+</div>
+</div>
+</div>
+<!-- Totals -->
+<div class="bg-surface-container-low p-6 rounded-2xl space-y-2 relative overflow-hidden">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Subtotal</span>
+<span class="font-bold">$1,250.00</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">IVA (12%)</span>
+<span class="font-bold">$150.00</span>
+</div>
+<div class="flex justify-between text-lg font-headline font-extrabold border-t border-outline-variant/20 pt-2 mt-2">
+<span>Total</span>
+<span class="text-primary">$1,400.00</span>
+</div>
+</div>
+</div>
+<div class="p-8 mt-auto">
+<button class="w-full bg-on-surface text-white py-4 rounded-2xl font-bold hover:bg-on-surface/90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">send</span>
+                            Enviar Factura por Correo
+                        </button>
+</div>
+</div>
+</div>
+<!-- Batch Card Component (Editorial Touch) -->
+<div class="mt-24 relative overflow-hidden bg-primary-fixed text-on-primary-fixed p-12 rounded-[3rem] batch-card-overlap z-10">
+<div class="max-w-2xl relative z-10">
+<h3 class="text-4xl font-headline font-extrabold leading-none mb-6">Optimiza tu logística de distribución</h3>
+<p class="text-lg text-on-primary-fixed-variant mb-8 leading-relaxed">Analiza los tiempos de cobro y mejora el flujo de caja con nuestras herramientas avanzadas de reportes comerciales.</p>
+<div class="flex gap-4">
+<button class="bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-primary/20">Configurar Alertas</button>
+<button class="bg-white/40 text-on-primary-fixed px-6 py-3 rounded-xl font-bold">Ver Estadísticas</button>
+</div>
+</div>
+<div class="absolute right-[-10%] top-[-20%] w-96 h-96 bg-primary-container/20 rounded-full blur-3xl"></div>
+<div class="absolute bottom-0 right-0 w-1/3 h-full opacity-40">
+<img class="w-full h-full object-cover rounded-tl-[10rem]" data-alt="close-up of fresh organic milk being poured into a luxury glass bottle in a bright modern kitchen with golden highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgG9NYZ_P8qF5MGNT40QEiVxJRABleTWqAsDZ7RCcn3SRVwBGxvD4zpevYFkGIS5Ep4TR4NMGbK5LzyJMUnunKadsHYmC17XOQj_w9abTH1aVATN_ELR8Op4OkvR6-rAZ8osZop6HaP_6UtvdUBoroHBB1Ikzvm2Lv6zKtvL17b4yV2v5SLpgjM-M0R53BEeNWTwm1gLx3q6jxMDWgpcZ_2SxWb6yXYJvV8XcGJKQkLbUSZR_On1V06zoJDd3Bi-D4KfJ_h64n"/>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Navigation (Only visible on small screens) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-xl border-t border-outline-variant/10 flex items-center justify-around px-4 z-50">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Inicio</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="text-[10px] font-bold">Ventas</span>
+</button>
+<button class="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center -translate-y-6 shadow-xl shadow-primary/40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-bold">Clientes</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Ajustes</span>
+</button>
+</nav>
+</body></html>

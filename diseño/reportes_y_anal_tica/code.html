@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#1c1b1b",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#504530",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#e2dfde",
+                    "surface": "#fcf9f8",
+                    "surface-bright": "#fcf9f8",
+                    "on-primary-fixed-variant": "#574500",
+                    "tertiary-fixed": "#f2e0c3",
+                    "surface-container": "#f0eded",
+                    "on-primary-fixed": "#241a00",
+                    "surface-dim": "#dcd9d9",
+                    "on-surface-variant": "#4d4635",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-tertiary-fixed": "#231a08",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#d4af37",
+                    "on-tertiary-container": "#4f442e",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "tertiary-fixed-dim": "#d5c5a8",
+                    "surface-tint": "#735c00",
+                    "inverse-on-surface": "#f3f0ef",
+                    "surface-container-high": "#eae7e7",
+                    "primary-fixed-dim": "#e9c349",
+                    "primary-fixed": "#ffe088",
+                    "outline": "#7f7663",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#636262",
+                    "tertiary": "#695d46",
+                    "surface-variant": "#e5e2e1",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#1c1b1b",
+                    "primary": "#735c00",
+                    "on-primary-container": "#554300",
+                    "outline-variant": "#d0c5af",
+                    "tertiary-container": "#c1b196",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#e5e2e1",
+                    "inverse-primary": "#e9c349",
+                    "background": "#fcf9f8",
+                    "secondary": "#5f5e5e",
+                    "inverse-surface": "#313030",
+                    "surface-container-low": "#f6f3f2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
+        .glass-header { backdrop-filter: blur(12px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col bg-[#fcf9f8] border-r border-[#1c1b1b]/5 z-50">
+<div class="flex flex-col gap-2 p-6 h-full">
+<div class="mb-8 px-2">
+<span class="font-['Manrope'] font-bold text-xl text-[#735c00]">ORO CAMPO</span>
+<p class="text-xs text-on-surface-variant/60 tracking-widest uppercase mt-1">Distribución Premium</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 p-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-transform duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-transform duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-['Inter'] font-medium text-sm">Inventario</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-transform duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-['Inter'] font-medium text-sm">Ventas</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-transform duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Inter'] font-medium text-sm">Clientes</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-transform duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-['Inter'] font-medium text-sm">Pagos</span>
+</a>
+<a class="flex items-center gap-3 p-3 bg-[#d4af37] text-white rounded-xl shadow-lg shadow-[#d4af37]/20 font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-['Inter'] font-medium text-sm">Reportes</span>
+</a>
+</nav>
+<button class="mt-4 mb-8 py-3 px-4 bg-primary text-on-primary rounded-full font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Nueva Venta</span>
+</button>
+<div class="border-t border-outline-variant/20 pt-6 flex flex-col gap-1">
+<a class="flex items-center gap-3 p-3 text-[#1c1b1b]/70 hover:bg-[#d4af37]/5 rounded-xl transition-transform duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] font-medium text-sm">Ajustes</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-error/70 hover:bg-error/5 rounded-xl transition-transform duration-300 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-['Inter'] font-medium text-sm">Cerrar Sesión</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-8 h-16 sticky top-0 bg-[#fcf9f8]/80 backdrop-blur-md z-40 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low px-4 py-2 rounded-full flex items-center gap-3 min-w-[320px]">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-outline-variant" placeholder="Buscar reportes o datos..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-2">
+<button class="p-2 text-[#735c00] hover:bg-[#d4af37]/10 rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#735c00] hover:bg-[#d4af37]/10 rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="text-xs font-bold leading-tight">Admin Campo</p>
+<p class="text-[10px] text-on-surface-variant">Gerente General</p>
+</div>
+<img alt="Foto de perfil" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="Professional headshot of a mature businessman with a friendly expression in a modern office setting, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxXUibZyDi29UF9SQpib8aWenb67hntARh3vo1MGOmswuS4eCes1jyPhZs555FJOVF7bBW2NX1LCprSfNbTelyA-ymeypbrCFUw_ut6t39kbcWfN7iSIQ-2fUlk5F968_z-4hAoeOHvn6SxmMek4oW6NQaPYVZihkGMykZF-kW6dODTk3J8yVxGzPdYMhJtucoeHp-GLQmIe2HS06MvZ6FJTz7dbw3zbwab1QGtSnr2uIkQl1oS7FutwIzVDRrZsn-gfCUEdAY"/>
+</div>
+</div>
+</header>
+<!-- Canvas Content -->
+<div class="p-10 max-w-7xl mx-auto">
+<!-- Hero Title & Global Controls -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<span class="text-primary font-bold tracking-[0.2em] text-xs uppercase mb-2 block">Analítica Avanzada</span>
+<h1 class="text-5xl font-black tracking-tighter text-on-surface">Reportes y Analítica</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-xl">
+<button class="px-4 py-2 bg-surface-container-lowest text-xs font-bold rounded-lg shadow-sm border border-outline-variant/10">Este Mes</button>
+<button class="px-4 py-2 text-xs font-medium text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">Trimestre</button>
+<button class="px-4 py-2 text-xs font-medium text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+                            Personalizado
+                        </button>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-5 py-3 bg-on-surface text-white rounded-full font-bold text-xs hover:bg-on-surface/90 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="picture_as_pdf">picture_as_pdf</span>
+                            PDF
+                        </button>
+<button class="flex items-center gap-2 px-5 py-3 border-2 border-outline-variant text-on-surface rounded-full font-bold text-xs hover:bg-surface-container-low transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="table_chart">table_chart</span>
+                            Excel
+                        </button>
+</div>
+</div>
+</section>
+<!-- Key Metrics Highlights -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container p-8 rounded-[2rem] text-on-primary shadow-2xl shadow-primary/20">
+<p class="text-sm font-medium opacity-80 mb-1">Ventas Totales Netas</p>
+<h3 class="text-4xl font-black tracking-tight mb-4">$142,850.00</h3>
+<div class="flex items-center gap-2 text-xs font-bold bg-white/20 w-fit px-3 py-1 rounded-full backdrop-blur-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+                        +12.4% vs mes anterior
+                    </div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" data-icon="monitoring">monitoring</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-8 rounded-[2rem] flex flex-col justify-between border border-outline-variant/10">
+<div>
+<p class="text-sm font-medium text-on-surface-variant mb-1">Margen Operativo Promedio</p>
+<h3 class="text-4xl font-black tracking-tight text-on-surface">24.8%</h3>
+</div>
+<div class="h-2 bg-outline-variant/30 rounded-full mt-6 overflow-hidden">
+<div class="h-full bg-primary w-[74%] rounded-full"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant/60 font-bold uppercase tracking-widest mt-4">Optimización Objetivo: 28%</p>
+</div>
+<div class="bg-surface-container-low p-8 rounded-[2rem] flex flex-col justify-between border border-outline-variant/10">
+<div>
+<p class="text-sm font-medium text-on-surface-variant mb-1">Ticket Promedio</p>
+<h3 class="text-4xl font-black tracking-tight text-on-surface">$1,240</h3>
+</div>
+<div class="flex items-center gap-2 mt-4">
+<div class="flex -space-x-2">
+<img alt="User 1" class="w-8 h-8 rounded-full border-2 border-surface-container-low" data-alt="Portrait of a male chef with a clean white uniform smiling broadly in a bright professional kitchen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk0kHI-FAsGkbB-AnGPOut2IAFBCzxvGHFglr6nEkNdVumMZyfLMd2VADr25iiclpGIpaV-bmmzi-GHV8FBUHHG26ItJSgBZH0QPR_0xzwBlSbRlgQkT_xSN63XgQDaDe1ffvhtAseo2VD49eegdlfoBmdvjbIIKJWtJRM2L4FHuAP4eYjnynRIZnvimhgBPjmQhJD4SmACcM1SVu_G7vYFr5ZJyGZndDZ-1vRESH5rgRXm9Jo0CFmNpoWwz2XOjBj-jPF7ouP"/>
+<img alt="User 2" class="w-8 h-8 rounded-full border-2 border-surface-container-low" data-alt="Close-up of a stylish young woman laughing in a warm autumn sunset outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA75Cy2HZfdDsHEwzx8ohlqYEd4nq8apmA4VByf1TE_gizMEII6VtU9hFoCFV-v4UrRGyIE7dIjeCVcEN0XdTrEnUMYHIEX9WcYofEY96T9RTAe-NDqqqpIl4K4b2CySaQi0M8NEywzwWioZRDneTuGUI1E-OSn9pCqP_OYLEA490p5okg1z6VHtw4ez0lglCSpgpCby596Tokn9OYCtnyatdso_S6W97SEaNB7WqXEmI94aMq3C3pZH_xwhBtd9roKB8n13nP"/>
+<img alt="User 3" class="w-8 h-8 rounded-full border-2 border-surface-container-low" data-alt="Sophisticated woman in a creative workspace looking thoughtfully at a computer screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY8DrnXexNtKpHCoY7QQNmKNAcsB4C-6ZBb-L6TCbp0ULEpB8T_zbyyN_ksowrSWO0YxEzkCGNmZZcPlFGcgr0AKg4kjR_e9bVdkw014mXEyI-4Huqz1pPNWq8LWHOxtuUcuCcDuu0Jq6T20FyxidZRgJyrToVXYFUCrEkBoqim1_uGhIn91j3eluoy0qETn12EshB1CbhZO0DKf0tu7SHulfvDF5ofpyraxD6Ai9mEYQgJbhWp-iTNoGg-4qGN30r3B6BovJn"/>
+</div>
+<span class="text-xs font-bold text-on-surface-variant">+840 clientes activos</span>
+</div>
+</div>
+</div>
+<!-- Main Data Bento Grid -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Ventas por Producto (Large Column Chart Area) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-10 rounded-[2.5rem] border border-outline-variant/5">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h4 class="text-2xl font-black tracking-tight mb-1">Ventas por Producto</h4>
+<p class="text-on-surface-variant text-sm">Distribución de volumen por categoría premium.</p>
+</div>
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="flex items-end justify-between h-64 gap-4 px-4">
+<!-- Simulated Chart Bars -->
+<div class="flex-1 group flex flex-col items-center">
+<div class="w-full bg-surface-container-high rounded-xl relative h-full flex items-end overflow-hidden">
+<div class="w-full bg-[#d4af37]/30 h-[85%] rounded-t-xl group-hover:bg-[#d4af37] transition-all duration-500"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Leche Entera</span>
+</div>
+<div class="flex-1 group flex flex-col items-center">
+<div class="w-full bg-surface-container-high rounded-xl relative h-full flex items-end overflow-hidden">
+<div class="w-full bg-[#d4af37]/30 h-[60%] rounded-t-xl group-hover:bg-[#d4af37] transition-all duration-500"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Queso Brie</span>
+</div>
+<div class="flex-1 group flex flex-col items-center">
+<div class="w-full bg-surface-container-high rounded-xl relative h-full flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[95%] rounded-t-xl"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-primary uppercase tracking-tighter">Mantequilla</span>
+</div>
+<div class="flex-1 group flex flex-col items-center">
+<div class="w-full bg-surface-container-high rounded-xl relative h-full flex items-end overflow-hidden">
+<div class="w-full bg-[#d4af37]/30 h-[45%] rounded-t-xl group-hover:bg-[#d4af37] transition-all duration-500"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Yogurt Griego</span>
+</div>
+<div class="flex-1 group flex flex-col items-center">
+<div class="w-full bg-surface-container-high rounded-xl relative h-full flex items-end overflow-hidden">
+<div class="w-full bg-[#d4af37]/30 h-[75%] rounded-t-xl group-hover:bg-[#d4af37] transition-all duration-500"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Crema Agria</span>
+</div>
+<div class="flex-1 group flex flex-col items-center">
+<div class="w-full bg-surface-container-high rounded-xl relative h-full flex items-end overflow-hidden">
+<div class="w-full bg-[#d4af37]/30 h-[30%] rounded-t-xl group-hover:bg-[#d4af37] transition-all duration-500"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Kefir</span>
+</div>
+</div>
+</div>
+<!-- Ventas por Cliente (Side Panel) -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-low p-8 rounded-[2.5rem]">
+<h4 class="text-xl font-bold tracking-tight mb-8">Top Clientes</h4>
+<div class="space-y-6">
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center text-primary font-bold">1</div>
+<div>
+<p class="text-sm font-bold">Restaurante El Olivo</p>
+<p class="text-[10px] text-on-surface-variant">Gourmet Dining</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold">$12,450</p>
+<p class="text-[10px] text-primary font-bold">+5.2%</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-high rounded-2xl transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-outline-variant/20 flex items-center justify-center text-on-surface-variant font-bold">2</div>
+<div>
+<p class="text-sm font-bold">Panadería Artesana</p>
+<p class="text-[10px] text-on-surface-variant">Bulk Buyer</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface-variant">$9,820</p>
+<p class="text-[10px] text-on-surface-variant">-1.4%</p>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-high rounded-2xl transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-outline-variant/20 flex items-center justify-center text-on-surface-variant font-bold">3</div>
+<div>
+<p class="text-sm font-bold">Hotel Sierra Real</p>
+<p class="text-[10px] text-on-surface-variant">Premium Partner</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface-variant">$8,100</p>
+<p class="text-[10px] text-primary font-bold">+12.8%</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-10 py-3 text-sm font-bold text-primary border border-primary/20 rounded-xl hover:bg-primary/5 transition-all">Ver Todos los Clientes</button>
+</div>
+<!-- Márgenes de Ganancia (Wide Row) -->
+<div class="col-span-12 bg-on-surface text-white p-10 rounded-[2.5rem] relative overflow-hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+<div>
+<h4 class="text-2xl font-black tracking-tight mb-4 text-primary-container">Márgenes de Ganancia por Categoría</h4>
+<p class="text-white/60 text-sm mb-8">Análisis detallado de rentabilidad sobre el costo de producción y logística.</p>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold uppercase tracking-wider">
+<span>Lácteos Líquidos</span>
+<span>18% Margin</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full">
+<div class="h-full bg-primary-container w-[18%] rounded-full shadow-[0_0_12px_rgba(212,175,55,0.4)]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold uppercase tracking-wider">
+<span>Quesos Madurados</span>
+<span>34% Margin</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full">
+<div class="h-full bg-primary-container w-[34%] rounded-full shadow-[0_0_12px_rgba(212,175,55,0.4)]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold uppercase tracking-wider">
+<span>Grasas y Mantequillas</span>
+<span>42% Margin</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full">
+<div class="h-full bg-primary-container w-[42%] rounded-full shadow-[0_0_12px_rgba(212,175,55,0.4)]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-primary-container text-6xl mb-4" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<h5 class="text-xl font-bold mb-2">Insight de Negocio</h5>
+<p class="text-sm text-white/70 leading-relaxed max-w-[280px]">
+                                Los quesos madurados han aumentado su margen un <span class="text-primary-container font-bold">4.2%</span> debido a la optimización de la cadena de frío este trimestre.
+                            </p>
+</div>
+</div>
+<!-- Decorative Background Element -->
+<div class="absolute right-0 bottom-0 top-0 w-1/3 bg-gradient-to-l from-primary-container/10 to-transparent pointer-events-none"></div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

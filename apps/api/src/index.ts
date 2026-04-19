@@ -5,6 +5,9 @@ import usersRouter from "./routes/users";
 import rolesRouter from "./routes/roles";
 import productTypesRouter from "./routes/productTypes";
 import inventoryRouter from "./routes/inventory";
+import clientesRouter from "./routes/clientes";
+import ventasRouter from "./routes/ventas";
+import pagosRouter from "./routes/pagos";
 
 const app = express();
 const PORT = process.env.PORT ?? 4001;
@@ -24,6 +27,9 @@ app.use("/users", usersRouter);
 app.use("/roles", rolesRouter);
 app.use("/product-types", productTypesRouter);
 app.use("/inventory", inventoryRouter);
+app.use("/clientes", clientesRouter);
+app.use("/ventas", ventasRouter);
+app.use("/pagos", pagosRouter);
 
 app.listen(PORT, () => {
   console.log(`API running on port ${PORT}`);
