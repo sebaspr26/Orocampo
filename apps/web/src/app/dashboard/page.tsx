@@ -41,6 +41,29 @@ async function getUsers(token: string) {
   } catch { return []; }
 }
 
+async function getPagosResumen(token: string) {
+  try {
+    const res = await fetch(`${API_URL}/pagos/resumen`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+async function getVentas(token: string) {
+  try {
+    const res = await fetch(`${API_URL}/ventas`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.ventas;
+  } catch { return []; }
+}
+
 interface SummaryItem {
   id: string;
   name: string;
@@ -69,18 +92,38 @@ interface User {
   isActive: boolean;
 }
 
+interface PagosResumen {
+  totalHoy: number;
+  efectivoHoy: number;
+  transferenciaHoy: number;
+  carteraPendiente: number;
+}
+
+interface Venta {
+  id: string;
+  total: number;
+  estado: string;
+  fecha: string;
+  cliente: { nombre: string };
+  metodoPago: string;
+}
+
 export default async function DashboardPage() {
   const user = await getSession();
   if (!user) redirect("/login");
 
   const token = await getToken();
-  const canSeeInventory = ["Root", "Administrador", "Secretaria"].includes(user.role);
   const isRoot = user.role === "Root";
+  const isAdmin = user.role === "Administrador";
+  const isSecretaria = user.role === "Secretaria";
+  const canSeeInventory = isRoot || isAdmin || isSecretaria;
 
-  const [summary, alerts, users] = await Promise.all([
+  const [summary, alerts, users, pagosResumen, ventas] = await Promise.all([
     canSeeInventory ? getSummary(token!) : Promise.resolve([]),
     canSeeInventory ? getAlerts(token!) : Promise.resolve([]),
     isRoot ? getUsers(token!) : Promise.resolve([]),
+    (isAdmin || isSecretaria) ? getPagosResumen(token!) : Promise.resolve(null),
+    isAdmin ? getVentas(token!) : Promise.resolve([]),
   ]);
 
   const lowStockAlerts = (alerts as Alert[]).filter((a) => a.type === "LOW_STOCK");
@@ -252,9 +295,291 @@ export default async function DashboardPage() {
     );
   }
 
-  // Operational Dashboard for Admin/Secretaria/Domiciliario
   const today = new Date().toLocaleDateString("es-CO", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const resumen = pagosResumen as PagosResumen | null;
 
+  // Dashboard Administrador
+  if (isAdmin) {
+    const ventasHoy = (ventas as Venta[]).filter((v) => {
+      const fecha = new Date(v.fecha);
+      const hoy = new Date();
+      return fecha.toDateString() === hoy.toDateString();
+    });
+    const totalVentasHoy = ventasHoy.reduce((sum, v) => sum + v.total, 0);
+    const ventasPendientes = (ventas as Venta[]).filter((v) => v.estado === "PENDIENTE");
+
+    return (
+      <AppLayout user={user}>
+        <div className="space-y-8">
+          <section className="flex flex-col md:flex-row justify-between items-end gap-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">Panel de Control</span>
+              <h2 className="text-4xl font-extrabold tracking-tighter text-[#1c1b1b] mt-1">Dashboard</h2>
+            </div>
+            <div className="bg-[#f6f3f2] px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-semibold capitalize">
+              <span className="material-symbols-outlined text-[#d4af37]">calendar_today</span>
+              {today}
+            </div>
+          </section>
+
+          {/* KPIs */}
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-[#d4af37] p-6 rounded-[2rem] text-white flex flex-col gap-3 shadow-xl shadow-[#d4af37]/20 col-span-2 md:col-span-1">
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+              <div>
+                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">Recaudado Hoy</p>
+                <h3 className="text-2xl font-black">${(resumen?.totalHoy ?? 0).toLocaleString("es-CO")}</h3>
+              </div>
+              <p className="text-white/60 text-[10px]">Efectivo: ${(resumen?.efectivoHoy ?? 0).toLocaleString("es-CO")}</p>
+            </div>
+            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
+              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>receipt_long</span>
+              <div>
+                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Ventas Hoy</p>
+                <h3 className="text-2xl font-black text-[#1c1b1b]">{ventasHoy.length}</h3>
+              </div>
+              <p className="text-[#7f7663] text-[10px]">${totalVentasHoy.toLocaleString("es-CO")} en total</p>
+            </div>
+            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
+              <span className="material-symbols-outlined text-[#ba1a1a]" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance_wallet</span>
+              <div>
+                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Cartera Pendiente</p>
+                <h3 className="text-2xl font-black text-[#ba1a1a]">${(resumen?.carteraPendiente ?? 0).toLocaleString("es-CO")}</h3>
+              </div>
+              <p className="text-[#7f7663] text-[10px]">{ventasPendientes.length} venta(s) sin pagar</p>
+            </div>
+            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
+              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
+              <div>
+                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Alertas Stock</p>
+                <h3 className="text-2xl font-black text-[#1c1b1b]">{lowStockAlerts.length + expiryAlerts.length}</h3>
+              </div>
+              <p className={`text-[10px] font-semibold ${lowStockAlerts.length > 0 ? "text-[#ba1a1a]" : "text-emerald-600"}`}>
+                {lowStockAlerts.length > 0 ? `${lowStockAlerts.length} producto(s) bajo mínimo` : "Inventario en orden"}
+              </p>
+            </div>
+          </section>
+
+          {/* Ventas recientes + Inventario */}
+          <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-white rounded-[2.5rem] p-8 shadow-sm border border-[#1c1b1b]/5">
+              <div className="flex justify-between items-center mb-6">
+                <h4 className="text-xl font-bold">Ventas Recientes</h4>
+                <a href="/ventas" className="text-[10px] font-bold text-[#d4af37] uppercase hover:underline">Ver todas</a>
+              </div>
+              {(ventas as Venta[]).length === 0 ? (
+                <div className="text-center py-10 text-[#7f7663]">
+                  <span className="material-symbols-outlined text-3xl mb-2 block">receipt_long</span>
+                  <p className="text-sm">No hay ventas registradas</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {(ventas as Venta[]).slice(0, 6).map((v) => (
+                    <div key={v.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#f6f3f2] transition-colors">
+                      <div>
+                        <p className="text-sm font-semibold text-[#1c1b1b]">{v.cliente.nombre}</p>
+                        <p className="text-xs text-[#7f7663]">{new Date(v.fecha).toLocaleDateString("es-CO")}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-[#735c00]">${v.total.toLocaleString("es-CO")}</span>
+                        <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${v.estado === "PAGADA" ? "bg-emerald-100 text-emerald-700" : "bg-[#ffdad6] text-[#93000a]"}`}>
+                          {v.estado}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-xl font-bold px-1">Inventario</h4>
+              {(summary as SummaryItem[]).map((item) => (
+                <div key={item.id} className="bg-white p-5 rounded-[2rem] shadow-sm border border-[#1c1b1b]/5 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-[#1c1b1b]">{item.name}</p>
+                    <p className="text-xs text-[#7f7663]">Mín: {item.minStockKg}kg</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-black text-[#735c00]">{item.totalKg.toFixed(1)}kg</p>
+                    {item.lowStock && <span className="text-[10px] bg-[#ffdad6] text-[#93000a] px-2 py-0.5 rounded-full font-bold">Bajo</span>}
+                  </div>
+                </div>
+              ))}
+              {(summary as SummaryItem[]).length === 0 && (
+                <div className="bg-white p-6 rounded-[2rem] text-center text-[#7f7663] shadow-sm">
+                  <span className="material-symbols-outlined text-2xl mb-1 block">inventory_2</span>
+                  <p className="text-sm">Sin inventario</p>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Dashboard Secretaria
+  if (isSecretaria) {
+    return (
+      <AppLayout user={user}>
+        <div className="space-y-8">
+          <section className="flex flex-col md:flex-row justify-between items-end gap-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">Operaciones</span>
+              <h2 className="text-4xl font-extrabold tracking-tighter text-[#1c1b1b] mt-1">Bienvenida</h2>
+            </div>
+            <div className="bg-[#f6f3f2] px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-semibold capitalize">
+              <span className="material-symbols-outlined text-[#d4af37]">calendar_today</span>
+              {today}
+            </div>
+          </section>
+
+          {/* Alertas críticas */}
+          {(lowStockAlerts.length > 0 || expiryAlerts.length > 0) && (
+            <section className="space-y-2">
+              {expiryAlerts.map((a, i) => (
+                <div key={i} className="flex items-center gap-3 bg-[#ffdad6]/50 border border-[#ba1a1a]/10 rounded-2xl px-5 py-3">
+                  <span className="material-symbols-outlined text-[#ba1a1a] text-sm">timer</span>
+                  <p className="text-sm text-[#93000a]"><span className="font-semibold">Por vencer:</span> {a.productName} — Lote {a.batchNumber} en {a.daysLeft} día(s)</p>
+                </div>
+              ))}
+              {lowStockAlerts.map((a, i) => (
+                <div key={i} className="flex items-center gap-3 bg-[#d4af37]/10 border border-[#d4af37]/20 rounded-2xl px-5 py-3">
+                  <span className="material-symbols-outlined text-[#735c00] text-sm">inventory</span>
+                  <p className="text-sm text-[#735c00]"><span className="font-semibold">Stock bajo:</span> {a.productName} — {a.totalKg?.toFixed(1)}kg disponibles</p>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {/* KPIs operacionales */}
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-[#d4af37] p-6 rounded-[2rem] text-white flex flex-col gap-3 shadow-xl shadow-[#d4af37]/20">
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
+              <div>
+                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">Tipos en Stock</p>
+                <h3 className="text-2xl font-black">{(summary as SummaryItem[]).length}</h3>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
+              <span className="material-symbols-outlined text-[#ba1a1a]" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+              <div>
+                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Stock Bajo</p>
+                <h3 className="text-2xl font-black text-[#1c1b1b]">{lowStockAlerts.length}</h3>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
+              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>timer</span>
+              <div>
+                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Por Vencer</p>
+                <h3 className="text-2xl font-black text-[#1c1b1b]">{expiryAlerts.length}</h3>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
+              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+              <div>
+                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Recaudado Hoy</p>
+                <h3 className="text-2xl font-black text-[#1c1b1b]">${(resumen?.totalHoy ?? 0).toLocaleString("es-CO")}</h3>
+              </div>
+            </div>
+          </section>
+
+          {/* Inventario actual */}
+          <section className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-[#1c1b1b]/5">
+            <div className="flex justify-between items-center mb-6">
+              <h4 className="text-xl font-bold">Inventario Disponible</h4>
+              <a href="/secretaria/inventario" className="text-[10px] font-bold text-[#d4af37] uppercase hover:underline">Ver detalle</a>
+            </div>
+            {(summary as SummaryItem[]).length === 0 ? (
+              <div className="text-center py-10 text-[#7f7663]">
+                <span className="material-symbols-outlined text-3xl mb-2 block">inventory_2</span>
+                <p className="text-sm">Sin inventario registrado</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {(summary as SummaryItem[]).map((item) => (
+                  <div key={item.id} className={`p-5 rounded-2xl flex items-center gap-4 ${item.lowStock ? "bg-[#ffdad6]/30 border border-[#ba1a1a]/10" : "bg-[#f6f3f2]"}`}>
+                    <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                      <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>nutrition</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-[#1c1b1b]">{item.name}</p>
+                      <p className="text-lg font-black text-[#735c00]">{item.totalKg.toFixed(1)}kg</p>
+                      {item.lowStock && <span className="text-[10px] text-[#ba1a1a] font-bold">Bajo el mínimo</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Accesos rápidos */}
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { href: "/secretaria/inventario", icon: "add_box", label: "Registrar Entrada" },
+              { href: "/secretaria/movimientos", icon: "swap_horiz", label: "Ver Movimientos" },
+              { href: "/ventas", icon: "receipt_long", label: "Nueva Venta" },
+              { href: "/clientes", icon: "group", label: "Gestionar Clientes" },
+            ].map((item) => (
+              <a key={item.href} href={item.href} className="bg-white p-5 rounded-[2rem] flex flex-col items-center gap-3 shadow-sm hover:shadow-md transition-shadow border border-[#1c1b1b]/5 text-center">
+                <div className="w-12 h-12 bg-[#d4af37]/10 rounded-2xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
+                </div>
+                <span className="text-sm font-bold text-[#1c1b1b]">{item.label}</span>
+              </a>
+            ))}
+          </section>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Dashboard Domiciliario
+  if (user.role === "Domiciliario") {
+    return (
+      <AppLayout user={user}>
+        <div className="space-y-6">
+          <section>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">Ruta del día</span>
+            <h2 className="text-3xl font-extrabold tracking-tighter text-[#1c1b1b] mt-1">Hola, {user.name ?? user.email}</h2>
+            <p className="text-sm text-[#7f7663] mt-1 capitalize">{today}</p>
+          </section>
+
+          <section className="grid grid-cols-2 gap-4">
+            <a href="/ventas" className="bg-[#d4af37] p-6 rounded-[2.5rem] flex flex-col gap-4 shadow-xl shadow-[#d4af37]/20 text-white">
+              <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>receipt_long</span>
+              <div>
+                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">Acción principal</p>
+                <h3 className="text-xl font-black mt-1">Registrar Venta</h3>
+              </div>
+            </a>
+            <a href="/pagos" className="bg-[#735c00] p-6 rounded-[2.5rem] flex flex-col gap-4 shadow-xl shadow-[#735c00]/20 text-white">
+              <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+              <div>
+                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">En ruta</p>
+                <h3 className="text-xl font-black mt-1">Registrar Pago</h3>
+              </div>
+            </a>
+          </section>
+
+          <section className="bg-white rounded-[2rem] p-6 shadow-sm border border-[#1c1b1b]/5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-[#d4af37]/10 rounded-2xl flex items-center justify-center">
+                <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bike</span>
+              </div>
+              <div>
+                <h5 className="font-bold text-[#1c1b1b]">Sin ruta asignada</h5>
+                <p className="text-sm text-[#7f7663]">Contacta al administrador para asignarte una ruta</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Fallback operacional
   return (
     <AppLayout user={user}>
       <div className="space-y-10">
