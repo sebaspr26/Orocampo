@@ -4,7 +4,7 @@ Sistema de gestión de inventario para productos lácteos (quesos), desarrollado
 
 ---
 
-## Tabla de contenido
+## Tabla de contenido x
 
 - [Tecnologías](#tecnologías)
 - [Estructura del proyecto](#estructura-del-proyecto)
