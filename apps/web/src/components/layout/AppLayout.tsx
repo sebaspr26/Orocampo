@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SessionUser } from "@/lib/session";
 import LogoutButton from "@/components/auth/LogoutButton";
+import NotificacionesBell from "@/components/layout/NotificacionesBell";
 
 interface NavItem {
   href: string;
@@ -149,9 +150,7 @@ export default function AppLayout({
               </div>
             </div>
             <div className="flex items-center gap-2 text-stone-400 ml-6">
-              <button className="hover:text-stone-900 transition-colors p-2 rounded-xl hover:bg-stone-100">
-                <span className="material-symbols-outlined">notifications</span>
-              </button>
+              <NotificacionesBell />
               <button className="hover:text-stone-900 transition-colors p-2 rounded-xl hover:bg-stone-100">
                 <span className="material-symbols-outlined">help_outline</span>
               </button>
@@ -273,10 +272,7 @@ export default function AppLayout({
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="relative text-[#1c1b1b]/50 hover:text-[#735c00] transition-colors p-2 rounded-xl hover:bg-[#d4af37]/10">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#ba1a1a] rounded-full" />
-            </button>
+            <NotificacionesBell />
             <button className="text-[#1c1b1b]/50 hover:text-[#735c00] transition-colors p-2 rounded-xl hover:bg-[#d4af37]/10">
               <span className="material-symbols-outlined">settings</span>
             </button>
