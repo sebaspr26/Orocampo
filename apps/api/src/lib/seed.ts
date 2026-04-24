@@ -27,23 +27,33 @@ async function main() {
     }),
   ]);
 
-  const rootRole = roles[0];
-  const password = await bcrypt.hash("root123", 12);
+  const [rootRole, adminRole, secretariaRole, domiciliarioRole] = roles;
 
-  const root = await prisma.user.upsert({
-    where: { email: "root@orocampo.com" },
-    update: {},
-    create: {
-      name: "Root",
-      email: "root@orocampo.com",
-      password,
-      roleId: rootRole.id,
-      isActive: true,
-    },
-  });
+  const users = await Promise.all([
+    prisma.user.upsert({
+      where: { email: "root@orocampo.com" },
+      update: {},
+      create: { name: "Root", email: "root@orocampo.com", password: await bcrypt.hash("root123", 12), roleId: rootRole.id, isActive: true },
+    }),
+    prisma.user.upsert({
+      where: { email: "julian@orocampo.com" },
+      update: {},
+      create: { name: "Julian", email: "julian@orocampo.com", password: await bcrypt.hash("julian123", 12), roleId: adminRole.id, isActive: true },
+    }),
+    prisma.user.upsert({
+      where: { email: "secretaria@orocampo.com" },
+      update: {},
+      create: { name: "Secretaria", email: "secretaria@orocampo.com", password: await bcrypt.hash("secretaria123", 12), roleId: secretariaRole.id, isActive: true },
+    }),
+    prisma.user.upsert({
+      where: { email: "domiciliario@orocampo.com" },
+      update: {},
+      create: { name: "Domiciliario", email: "domiciliario@orocampo.com", password: await bcrypt.hash("domiciliario123", 12), roleId: domiciliarioRole.id, isActive: true },
+    }),
+  ]);
 
   console.log("Roles creados:", roles.map((r) => r.name).join(", "));
-  console.log("Root creado:", root.email);
+  console.log("Usuarios creados:", users.map((u) => u.email).join(", "));
 
   // Seed default cheese types
   await Promise.all([

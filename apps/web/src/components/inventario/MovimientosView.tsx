@@ -1,15 +1,32 @@
 "use client";
+
 import { useState } from "react";
 import { formatWeight, formatDate } from "@/lib/format";
 import MovimientoModal from "./MovimientoModal";
+import { Button, Badge, EmptyState } from "@/components/ui";
+import type { BadgeVariant } from "@/components/ui";
 
-interface Entry { id: string; batchNumber: string; productType: { name: string }; remainingKg: number; }
+interface Entry {
+  id: string;
+  batchNumber: string;
+  productType: { name: string };
+  remainingKg: number;
+}
 interface Movement {
-  id: string; type: string; quantityKg: number; reason?: string; createdAt: string;
+  id: string;
+  type: string;
+  quantityKg: number;
+  reason?: string;
+  createdAt: string;
   entry: { batchNumber: string; productType: { name: string } };
 }
-
 interface Props { initialMovements: Movement[]; entries: Entry[]; }
+
+const typeBadge: Record<string, BadgeVariant> = {
+  ENTRADA: "success",
+  SALIDA: "error",
+  AJUSTE: "info",
+};
 
 export default function MovimientosView({ initialMovements, entries }: Props) {
   const [movements, setMovements] = useState(initialMovements);
@@ -20,52 +37,95 @@ export default function MovimientosView({ initialMovements, entries }: Props) {
     if (res.ok) setMovements((await res.json()).movements);
   }
 
-  const typeColors: Record<string, string> = {
-    ENTRADA: "bg-green-100 text-green-700",
-    SALIDA: "bg-red-100 text-red-600",
-    AJUSTE: "bg-blue-100 text-blue-700",
-  };
+  const entradas = movements.filter((m) => m.type === "ENTRADA");
+  const salidas = movements.filter((m) => m.type === "SALIDA");
+  const totalEntradas = entradas.reduce((s, m) => s + m.quantityKg, 0);
+  const totalSalidas = salidas.reduce((s, m) => s + m.quantityKg, 0);
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <button onClick={() => setModalOpen(true)} className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
-          + Registrar movimiento
-        </button>
+    <div className="space-y-6">
+      {/* KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="card-gold p-8 flex flex-col gap-4 relative overflow-hidden group">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+            <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
+              swap_vert
+            </span>
+          </div>
+          <div>
+            <p className="text-white/80 text-xs font-semibold uppercase tracking-wider">Total Movimientos</p>
+            <h3 className="text-3xl font-black text-white tracking-tighter mt-1">{movements.length}</h3>
+          </div>
+          <p className="text-white/70 text-xs font-semibold">registros en historial</p>
+          <span className="material-symbols-outlined absolute -bottom-8 -right-8 text-[140px] text-white/5 group-hover:scale-110 transition-transform duration-700">
+            swap_vert
+          </span>
+        </div>
+
+        <div className="card p-8">
+          <p className="text-[#1c1b1b]/50 text-xs font-semibold uppercase tracking-wider">Total Entradas</p>
+          <h3 className="text-3xl font-black text-emerald-600 mt-1 tracking-tighter">{formatWeight(totalEntradas)}</h3>
+          <p className="text-xs text-[#7f7663] mt-2 font-semibold">{entradas.length} movimiento(s)</p>
+        </div>
+
+        <div className="card p-8">
+          <p className="text-[#1c1b1b]/50 text-xs font-semibold uppercase tracking-wider">Total Salidas</p>
+          <h3 className="text-3xl font-black text-[#ba1a1a] mt-1 tracking-tighter">{formatWeight(totalSalidas)}</h3>
+          <p className="text-xs text-[#7f7663] mt-2 font-semibold">{salidas.length} movimiento(s)</p>
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-              <tr>
-                <th className="px-5 py-3 text-left">Fecha</th>
-                <th className="px-5 py-3 text-left">Tipo</th>
-                <th className="px-5 py-3 text-left">Producto</th>
-                <th className="px-5 py-3 text-left">Lote</th>
-                <th className="px-5 py-3 text-right">Cantidad</th>
-                <th className="px-5 py-3 text-left">Motivo</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {movements.length === 0 && (
-                <tr><td colSpan={6} className="px-5 py-8 text-center text-gray-400">Sin movimientos registrados</td></tr>
-              )}
-              {movements.map((m) => (
-                <tr key={m.id} className="hover:bg-gray-50 transition">
-                  <td className="px-5 py-3 text-gray-500">{formatDate(m.createdAt)}</td>
-                  <td className="px-5 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full ${typeColors[m.type] ?? "bg-gray-100 text-gray-600"}`}>{m.type}</span>
-                  </td>
-                  <td className="px-5 py-3 font-medium text-gray-900">{m.entry.productType.name}</td>
-                  <td className="px-5 py-3 text-gray-500">{m.entry.batchNumber}</td>
-                  <td className="px-5 py-3 text-right font-medium text-gray-900">{formatWeight(m.quantityKg)}</td>
-                  <td className="px-5 py-3 text-gray-500">{m.reason ?? "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Table */}
+      <div className="table-container">
+        <div className="flex items-center justify-between p-8 border-b border-[#f0eded]">
+          <div>
+            <h4 className="text-xl font-bold text-[#1c1b1b]">Historial de Movimientos</h4>
+            <p className="text-sm text-[#7f7663]">{movements.length} movimiento(s) registrado(s)</p>
+          </div>
+          <Button icon="add" onClick={() => setModalOpen(true)}>Registrar movimiento</Button>
         </div>
+
+        {movements.length === 0 ? (
+          <EmptyState
+            icon="swap_vert"
+            title="Sin movimientos registrados"
+            description="Registra el primer movimiento de inventario"
+            action={<Button icon="add" onClick={() => setModalOpen(true)}>Registrar movimiento</Button>}
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr>
+                  <th className="table-header-cell">Fecha</th>
+                  <th className="table-header-cell">Tipo</th>
+                  <th className="table-header-cell">Producto</th>
+                  <th className="table-header-cell">Lote</th>
+                  <th className="table-header-cell" style={{ textAlign: "right" }}>Cantidad</th>
+                  <th className="table-header-cell">Motivo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {movements.map((m) => (
+                  <tr key={m.id} className="table-row">
+                    <td className="table-cell text-[#7f7663]">{formatDate(m.createdAt)}</td>
+                    <td className="table-cell">
+                      <Badge variant={typeBadge[m.type] ?? "neutral"}>{m.type}</Badge>
+                    </td>
+                    <td className="table-cell font-semibold text-[#1c1b1b]">{m.entry.productType.name}</td>
+                    <td className="table-cell">
+                      <span className="font-mono text-xs text-[#7f7663] bg-[#f6f3f2] px-2 py-1 rounded-lg">
+                        {m.entry.batchNumber}
+                      </span>
+                    </td>
+                    <td className="table-cell text-right font-bold text-[#735c00]">{formatWeight(m.quantityKg)}</td>
+                    <td className="table-cell text-[#7f7663]">{m.reason ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {modalOpen && (

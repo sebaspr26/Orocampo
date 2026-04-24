@@ -1,0 +1,38 @@
+# ── Build outputs ──────────────────────────────────────
+.next/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# ── Dependencies ───────────────────────────────────────
+node_modules/
+apps/*/node_modules/
+
+# ── Locks (no cambian la lógica) ───────────────────────
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ── Prisma migrations (verbosas, raramente relevantes) ──
+apps/api/prisma/migrations/
+
+# ── Archivos de diseño / assets binarios ───────────────
+diseño/
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.ico
+*.woff
+*.woff2
+*.ttf
+
+# ── Docker / infra (solo tocar si se pide) ─────────────
+Dockerfile.*
+docker-compose*.yml
+
+# ── IDE / sistema ──────────────────────────────────────
+.git/
+*.log
+.DS_Store
+*.code-workspace

@@ -16,7 +16,7 @@ async function fetchJson(url: string, token: string) {
 export default async function InventarioPage() {
   const user = await getSession();
   if (!user) redirect("/login");
-  if (user.role !== "Secretaria") redirect("/dashboard");
+  if (!["Secretaria", "Administrador"].includes(user.role)) redirect("/dashboard");
 
   const token = await getToken();
   const [summaryData, entriesData, alertsData, typesData] = await Promise.all([
@@ -28,11 +28,11 @@ export default async function InventarioPage() {
 
   return (
     <AppLayout user={user}>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Inventario</h2>
-          <p className="text-gray-500 text-sm mt-1">Gestión de productos y stock</p>
-        </div>
+      <div className="space-y-8">
+        <section className="flex flex-col gap-1">
+          <span className="page-eyebrow">Gestión de Stock</span>
+          <h2 className="page-title">Inventario</h2>
+        </section>
         <InventarioView
           summary={summaryData?.summary ?? []}
           entries={entriesData?.entries ?? []}

@@ -42,11 +42,11 @@ export default async function UsuariosPage() {
 
   return (
     <AppLayout user={user}>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Usuarios</h2>
-          <p className="text-gray-500 text-sm mt-1">Gestiona los usuarios del sistema</p>
-        </div>
+      <div className="space-y-8">
+        <section className="flex flex-col gap-1">
+          <span className="page-eyebrow">Gestión del Sistema</span>
+          <h2 className="page-title">Usuarios</h2>
+        </section>
         <UsersTable initialUsers={users} roles={roles} />
       </div>
     </AppLayout>

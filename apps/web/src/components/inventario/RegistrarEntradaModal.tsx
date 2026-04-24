@@ -1,13 +1,11 @@
 "use client";
+
 import { useState } from "react";
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
 
 interface ProductType { id: string; name: string; }
-
-interface Props {
-  productTypes: ProductType[];
-  onClose: () => void;
-  onSaved: () => void;
-}
+interface Props { productTypes: ProductType[]; onClose: () => void; onSaved: () => void; }
 
 export default function RegistrarEntradaModal({ productTypes, onClose, onSaved }: Props) {
   const [productTypeId, setProductTypeId] = useState(productTypes[0]?.id ?? "");
@@ -41,74 +39,120 @@ export default function RegistrarEntradaModal({ productTypes, onClose, onSaved }
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Error al registrar"); return; }
       onSaved();
-    } catch { setError("Error de conexión"); }
-    finally { setLoading(false); }
+    } catch {
+      setError("Error de conexión");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-900">Registrar entrada de producto</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+    <Modal title="Registrar entrada de producto" onClose={onClose} size="lg">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div className="bg-[#ffdad6] text-[#93000a] text-sm px-4 py-3 rounded-2xl border border-[#ba1a1a]/10">
+            {error}
+          </div>
+        )}
+
+        <div>
+          <label className="input-label">Tipo de queso</label>
+          <select
+            value={productTypeId}
+            onChange={(e) => setProductTypeId(e.target.value)}
+            required
+            className="input bg-white"
+          >
+            {productTypes.map((t) => (
+              <option key={t.id} value={t.id}>{t.name}</option>
+            ))}
+          </select>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tipo de queso</label>
-              <select value={productTypeId} onChange={(e) => setProductTypeId(e.target.value)} required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white">
-                {productTypes.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Número de lote</label>
-              <input type="text" value={batchNumber} onChange={(e) => setBatchNumber(e.target.value)} required placeholder="LOT-001"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Cantidad (kg)</label>
-              <input type="number" value={quantityKg} onChange={(e) => setQuantityKg(e.target.value)} required min="0.1" step="0.1" placeholder="100"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Fecha de ingreso</label>
-              <input type="date" value={entryDate} onChange={(e) => setEntryDate(e.target.value)} required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Fecha de vencimiento</label>
-              <input type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-            </div>
-
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Precio de compra (por kg)</label>
-              <input type="number" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} required min="0" step="0.01" placeholder="5000"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
-            </div>
-
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Notas <span className="text-gray-400 font-normal">(opcional)</span></label>
-              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Observaciones..."
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none" />
-            </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="input-label">Número de lote</label>
+            <input
+              type="text"
+              value={batchNumber}
+              onChange={(e) => setBatchNumber(e.target.value)}
+              required
+              placeholder="LOT-001"
+              className="input"
+            />
           </div>
-
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm hover:border-gray-300 transition">Cancelar</button>
-            <button type="submit" disabled={loading} className="flex-1 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 text-white font-semibold py-2.5 rounded-lg text-sm transition">
-              {loading ? "Registrando..." : "Registrar entrada"}
-            </button>
+          <div>
+            <label className="input-label">Cantidad (kg)</label>
+            <input
+              type="number"
+              value={quantityKg}
+              onChange={(e) => setQuantityKg(e.target.value)}
+              required
+              min="0.1"
+              step="0.1"
+              placeholder="100"
+              className="input"
+            />
           </div>
-        </form>
-      </div>
-    </div>
+          <div>
+            <label className="input-label">Fecha de ingreso</label>
+            <input
+              type="date"
+              value={entryDate}
+              onChange={(e) => setEntryDate(e.target.value)}
+              required
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="input-label">Fecha de vencimiento</label>
+            <input
+              type="date"
+              value={expiryDate}
+              onChange={(e) => setExpiryDate(e.target.value)}
+              required
+              className="input"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="input-label">Precio de compra (por kg)</label>
+          <input
+            type="number"
+            value={purchasePrice}
+            onChange={(e) => setPurchasePrice(e.target.value)}
+            required
+            min="0"
+            step="0.01"
+            placeholder="5000"
+            className="input"
+          />
+        </div>
+
+        <div>
+          <label className="input-label">
+            Notas{" "}
+            <span className="text-[#7f7663] normal-case font-normal tracking-normal">(opcional)</span>
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={2}
+            placeholder="Observaciones..."
+            className="input resize-none"
+          />
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <Button type="button" variant="ghost" className="flex-1 justify-center" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="submit" variant="primary" disabled={loading} className="flex-1 justify-center">
+            {loading ? "Registrando..." : "Registrar entrada"}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }
