@@ -97,7 +97,7 @@ const entrySchema = z.object({
   notes: z.string().optional(),
 });
 
-router.post("/entries", requireAuth, requireRole("Secretaria"), async (req: AuthRequest, res: Response): Promise<void> => {
+router.post("/entries", requireAuth, requireRole("Secretaria", "Administrador"), async (req: AuthRequest, res: Response): Promise<void> => {
   const parsed = entrySchema.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Datos inválidos", details: parsed.error.flatten() }); return; }
 
@@ -160,7 +160,7 @@ const movementSchema = z.object({
   reason: z.string().optional(),
 });
 
-router.post("/movements", requireAuth, requireRole("Secretaria"), async (req: AuthRequest, res: Response): Promise<void> => {
+router.post("/movements", requireAuth, requireRole("Secretaria", "Administrador"), async (req: AuthRequest, res: Response): Promise<void> => {
   const parsed = movementSchema.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Datos inválidos" }); return; }
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import SearchableSelect from "@/components/ui/SearchableSelect";
 
 interface Cliente { id: string; nombre: string; }
 interface Venta { id: string; total: number; cliente: { nombre: string }; }
@@ -80,10 +81,13 @@ export default function PagoFormModal({ clientes, ventas, onClose, onSaved }: Pr
           )}
           <div>
             <label className={labelClass}>Cliente *</label>
-            <select value={clienteId} onChange={e => { setClienteId(e.target.value); setVentaId(""); }} required className={`${inputClass} bg-[#f6f3f2]`}>
-              <option value="">Seleccionar cliente...</option>
-              {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <SearchableSelect
+              options={clientes.map(c => ({ value: c.id, label: c.nombre }))}
+              value={clienteId}
+              onChange={v => { setClienteId(v); setVentaId(""); }}
+              placeholder="Seleccionar cliente..."
+              required
+            />
           </div>
           {clienteId && ventasDelCliente.length > 0 && (
             <div>

@@ -28,6 +28,7 @@ const adminNavItems: NavItem[] = [
   { href: "/ventas", label: "Ventas", icon: "receipt_long", roles: ["Administrador"] },
   { href: "/clientes", label: "Clientes", icon: "group", roles: ["Administrador"] },
   { href: "/pagos", label: "Pagos", icon: "payments", roles: ["Administrador"] },
+  { href: "/rutas", label: "Rutas", icon: "route", roles: ["Administrador"] },
   { href: "/reportes", label: "Reportes", icon: "analytics", roles: ["Administrador"] },
 ];
 
@@ -38,10 +39,12 @@ const secretariaNavItems: NavItem[] = [
   { href: "/ventas", label: "Ventas", icon: "receipt_long", roles: ["Secretaria"] },
   { href: "/clientes", label: "Clientes", icon: "group", roles: ["Secretaria"] },
   { href: "/pagos", label: "Pagos", icon: "payments", roles: ["Secretaria"] },
+  { href: "/rutas", label: "Rutas", icon: "route", roles: ["Secretaria"] },
 ];
 
 const domiciliarioNavItems: NavItem[] = [
   { href: "/dashboard", label: "Inicio", icon: "home", roles: ["Domiciliario"] },
+  { href: "/rutas", label: "Mi Ruta", icon: "route", roles: ["Domiciliario"] },
   { href: "/ventas", label: "Registrar Venta", icon: "receipt_long", roles: ["Domiciliario"] },
   { href: "/pagos", label: "Registrar Pago", icon: "payments", roles: ["Domiciliario"] },
 ];

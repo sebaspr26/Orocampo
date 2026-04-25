@@ -9,6 +9,7 @@ interface Venta {
   id: string;
   clienteId: string;
   cliente: { id: string; nombre: string };
+  createdBy: { id: string; name: string | null };
   fecha: string;
   metodoPago: string;
   estado: string;
@@ -132,6 +133,7 @@ export default function VentasView({ initialVentas, clientes, productTypes }: Pr
                   <th className="px-6 py-4 text-left font-bold">Productos</th>
                   <th className="px-6 py-4 text-left font-bold">Método</th>
                   <th className="px-6 py-4 text-right font-bold">Total</th>
+                  <th className="px-6 py-4 text-left font-bold">Vendedor</th>
                   <th className="px-6 py-4 text-left font-bold">Estado</th>
                   <th className="px-6 py-4 text-left font-bold">Fecha</th>
                 </tr>
@@ -150,6 +152,7 @@ export default function VentasView({ initialVentas, clientes, productTypes }: Pr
                       <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${metodoBadge(v.metodoPago)}`}>{v.metodoPago}</span>
                     </td>
                     <td className="px-6 py-4 text-right font-bold text-[#735c00]">{fmt(v.total)}</td>
+                    <td className="px-6 py-4 text-sm text-[#4d4635]">{v.createdBy?.name ?? "—"}</td>
                     <td className="px-6 py-4">
                       <span className={`text-[10px] font-bold px-3 py-1.5 rounded-full ${estadoBadge(v.estado)}`}>{v.estado}</span>
                     </td>

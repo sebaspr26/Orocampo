@@ -12,6 +12,7 @@ router.get("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario
     const ventas = await prisma.venta.findMany({
       include: {
         cliente: { select: { id: true, nombre: true } },
+        createdBy: { select: { id: true, name: true } },
         items: {
           include: { productType: { select: { id: true, name: true } } },
         },

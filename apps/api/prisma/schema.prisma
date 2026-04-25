@@ -17,15 +17,17 @@ model Role {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String?
-  email     String   @unique
-  password  String
-  roleId    String?
-  role      Role?    @relation(fields: [roleId], references: [id])
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  name              String?
+  email             String   @unique
+  password          String
+  roleId            String?
+  role              Role?    @relation(fields: [roleId], references: [id])
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  ventasCreadas     Venta[]  @relation("VentaCreador")
+  rutasDomiciliario Ruta[]   @relation("RutaDomiciliario")
 }
 
 model ProductType {
@@ -75,6 +77,8 @@ model Cliente {
   direccion String?
   notas     String?
   isActive  Boolean  @default(true)
+  rutaId    String?
+  ruta      Ruta?    @relation(fields: [rutaId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ventas    Venta[]
@@ -91,6 +95,7 @@ model Venta {
   total       Float
   notas       String?
   createdById String
+  createdBy   User        @relation("VentaCreador", fields: [createdById], references: [id])
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   items       ItemVenta[]
@@ -140,4 +145,15 @@ model NotificationRead {
   readAt         DateTime     @default(now())
 
   @@unique([notificationId, userId])
+}
+
+model Ruta {
+  id             String    @id @default(cuid())
+  nombre         String
+  domiciliarioId String
+  domiciliario   User      @relation("RutaDomiciliario", fields: [domiciliarioId], references: [id])
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  clientes       Cliente[]
 }

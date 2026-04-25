@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
 
     const roleRoutes: Array<{ path: string; roles: string[] }> = [
       { path: "/admin", roles: ["Root"] },
-      { path: "/secretaria", roles: ["Secretaria"] },
+      { path: "/secretaria", roles: ["Secretaria", "Administrador"] },
     ];
 
     const restricted = roleRoutes.find((r) => pathname.startsWith(r.path));
