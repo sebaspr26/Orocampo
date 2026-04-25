@@ -9,9 +9,11 @@ router.use(requireAuth);
 // GET /ventas
 router.get("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario"), async (req: AuthRequest, res) => {
   try {
+    const isDomiciliario = req.user!.role === "Domiciliario";
     const ventas = await prisma.venta.findMany({
+      where: isDomiciliario ? { createdById: req.user!.id } : undefined,
       include: {
-        cliente: { select: { id: true, nombre: true } },
+        cliente: { select: { id: true, nombre: true, esMostrador: true } },
         createdBy: { select: { id: true, name: true } },
         items: {
           include: { productType: { select: { id: true, name: true } } },
@@ -70,7 +72,7 @@ router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliari
           },
         },
         include: {
-          cliente: { select: { id: true, nombre: true } },
+          cliente: { select: { id: true, nombre: true, esMostrador: true } },
           items: { include: { productType: { select: { id: true, name: true } } } },
         },
       });
@@ -121,6 +123,35 @@ router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliari
 
       return newVenta;
     });
+
+    // Auto-notificaciones: verificar stock bajo después de la venta
+    try {
+      const EXPIRY_ALERT_DAYS = 7;
+      const now = new Date();
+      const alertThreshold = new Date(now.getTime() + EXPIRY_ALERT_DAYS * 24 * 60 * 60 * 1000);
+
+      const types = await prisma.productType.findMany({
+        include: { entries: { where: { remainingKg: { gt: 0 } }, select: { remainingKg: true, expiryDate: true } } },
+      });
+
+      const notifications: { title: string; message: string }[] = [];
+      for (const t of types) {
+        const totalKg = t.entries.reduce((s, e) => s + e.remainingKg, 0);
+        if (totalKg < t.minStockKg) {
+          notifications.push({ title: `Stock bajo: ${t.name}`, message: `Quedan ${totalKg.toFixed(1)} kg de ${t.name} (mínimo: ${t.minStockKg} kg). Se requiere reabastecimiento.` });
+        }
+        const expiring = t.entries.filter(e => new Date(e.expiryDate) <= alertThreshold);
+        if (expiring.length > 0) {
+          notifications.push({ title: `Vencimiento próximo: ${t.name}`, message: `${expiring.length} lote(s) de ${t.name} vencen en los próximos 7 días.` });
+        }
+      }
+
+      for (const n of notifications) {
+        await prisma.notification.create({
+          data: { title: n.title, message: n.message, targetRoles: ["Root", "Administrador"], createdById: req.user!.id },
+        });
+      }
+    } catch { /* silencioso */ }
 
     res.json({ venta });
   } catch (err) {

@@ -31,14 +31,18 @@ model User {
 }
 
 model ProductType {
-  id          String           @id @default(cuid())
-  name        String           @unique
-  description String?
-  minStockKg  Float            @default(10)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  entries     InventoryEntry[]
-  itemsVenta  ItemVenta[]
+  id               String           @id @default(cuid())
+  name             String           @unique
+  description      String?
+  minStockKg       Float            @default(10)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  entries          InventoryEntry[]
+  itemsVenta       ItemVenta[]
+  devolucionItems  DevolucionItem[]
+  preciosCliente   PrecioCliente[]
+  historialPrecios HistorialPrecio[]
+  preciosTipo      PrecioTipo[]
 }
 
 model InventoryEntry {
@@ -69,37 +73,68 @@ model StockMovement {
   createdAt   DateTime       @default(now())
 }
 
+model TipoCliente {
+  id          String       @id @default(cuid())
+  nombre      String       @unique
+  descripcion String?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  clientes    Cliente[]
+  precios     PrecioTipo[]
+}
+
+model PrecioTipo {
+  id            String      @id @default(cuid())
+  tipoClienteId String
+  tipoCliente   TipoCliente @relation(fields: [tipoClienteId], references: [id])
+  productTypeId String
+  productType   ProductType @relation(fields: [productTypeId], references: [id])
+  precio        Float
+  createdById   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([tipoClienteId, productTypeId])
+}
+
 model Cliente {
-  id        String   @id @default(cuid())
-  nombre    String
-  telefono  String?
-  email     String?
-  direccion String?
-  notas     String?
-  isActive  Boolean  @default(true)
-  rutaId    String?
-  ruta      Ruta?    @relation(fields: [rutaId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ventas    Venta[]
-  pagos     Pago[]
+  id              String          @id @default(cuid())
+  nombre          String
+  telefono        String?
+  email           String?
+  direccion       String?
+  notas           String?
+  isActive        Boolean         @default(true)
+  esMostrador     Boolean         @default(false)
+  rutaId          String?
+  ruta            Ruta?           @relation(fields: [rutaId], references: [id])
+  tipoClienteId   String?
+  tipoCliente     TipoCliente?    @relation(fields: [tipoClienteId], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  ventas          Venta[]
+  pagos           Pago[]
+  devoluciones    Devolucion[]
+  preciosCliente  PrecioCliente[]
 }
 
 model Venta {
-  id          String      @id @default(cuid())
+  id          String       @id @default(cuid())
   clienteId   String
-  cliente     Cliente     @relation(fields: [clienteId], references: [id])
-  fecha       DateTime    @default(now())
+  cliente     Cliente      @relation(fields: [clienteId], references: [id])
+  fecha       DateTime     @default(now())
   metodoPago  String
-  estado      String      @default("PENDIENTE")
+  estado      String       @default("PENDIENTE")
   total       Float
   notas       String?
   createdById String
-  createdBy   User        @relation("VentaCreador", fields: [createdById], references: [id])
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdBy   User         @relation("VentaCreador", fields: [createdById], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   items       ItemVenta[]
   pagos       Pago[]
+  devoluciones Devolucion[]
 }
 
 model ItemVenta {
@@ -123,6 +158,7 @@ model Pago {
   metodoPago  String
   fecha       DateTime @default(now())
   notas       String?
+  comprobante String?
   createdById String
   createdAt   DateTime @default(now())
 }
@@ -156,4 +192,82 @@ model Ruta {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   clientes       Cliente[]
+}
+
+model Devolucion {
+  id          String           @id @default(cuid())
+  clienteId   String
+  cliente     Cliente          @relation(fields: [clienteId], references: [id])
+  ventaId     String?
+  venta       Venta?           @relation(fields: [ventaId], references: [id])
+  motivo      String
+  estado      String           @default("REGISTRADA")
+  createdById String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  items       DevolucionItem[]
+}
+
+model DevolucionItem {
+  id            String      @id @default(cuid())
+  devolucionId  String
+  devolucion    Devolucion  @relation(fields: [devolucionId], references: [id], onDelete: Cascade)
+  productTypeId String
+  productType   ProductType @relation(fields: [productTypeId], references: [id])
+  cantidadKg    Float
+  razon         String
+}
+
+model PrecioCliente {
+  id            String      @id @default(cuid())
+  clienteId     String
+  cliente       Cliente     @relation(fields: [clienteId], references: [id])
+  productTypeId String
+  productType   ProductType @relation(fields: [productTypeId], references: [id])
+  precio        Float
+  vigente       Boolean     @default(true)
+  createdById   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([clienteId, productTypeId])
+}
+
+model HistorialPrecio {
+  id             String      @id @default(cuid())
+  clienteId      String
+  productTypeId  String
+  productType    ProductType @relation(fields: [productTypeId], references: [id])
+  precioAnterior Float
+  precioNuevo    Float
+  createdById    String
+  createdAt      DateTime    @default(now())
+}
+
+model CorteCaja {
+  id                 String   @id @default(cuid())
+  fecha              DateTime @default(now())
+  totalEfectivo      Float    @default(0)
+  totalTransferencia Float    @default(0)
+  montoDeclarado     Float?
+  diferencia         Float?
+  notas              String?
+  estado             String   @default("CERRADO")
+  createdById        String
+  createdAt          DateTime @default(now())
+}
+
+model Moto {
+  id                String    @id @default(cuid())
+  placa             String    @unique
+  notas             String?
+  isActive          Boolean   @default(true)
+  fechaInicioTecno  DateTime?
+  fechaFinTecno     DateTime?
+  fechaInicioSeguro DateTime?
+  fechaFinSeguro    DateTime?
+  picoYPlaca        String?
+  createdById       String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }

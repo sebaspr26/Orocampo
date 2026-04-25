@@ -411,4 +411,108 @@ router.get("/margen", async (req: AuthRequest, res) => {
   }
 });
 
+// GET /reportes/devoluciones — reporte de pérdidas por devolución (RF-38)
+router.get("/devoluciones", async (req: AuthRequest, res) => {
+  const { desde, hasta } = req.query as Record<string, string>;
+  const { from, to } = parseDateRange(desde, hasta);
+
+  try {
+    const devoluciones = await prisma.devolucion.findMany({
+      where: { createdAt: { gte: from, lte: to } },
+      include: {
+        cliente: { select: { id: true, nombre: true } },
+        items: { include: { productType: { select: { name: true } } } },
+      },
+    });
+
+    const perdidas: Record<string, { nombre: string; totalKg: number; count: number; clientes: Set<string> }> = {};
+    let totalKg = 0;
+
+    for (const d of devoluciones) {
+      for (const item of d.items) {
+        const key = item.productTypeId;
+        if (!perdidas[key]) perdidas[key] = { nombre: item.productType.name, totalKg: 0, count: 0, clientes: new Set() };
+        perdidas[key].totalKg += item.cantidadKg;
+        perdidas[key].count++;
+        perdidas[key].clientes.add(d.clienteId);
+        totalKg += item.cantidadKg;
+      }
+    }
+
+    const porRazon: Record<string, number> = { CLIENTE_RECHAZO: 0, VENCIDO: 0, MAL_ESTADO: 0, EXCESO: 0 };
+    devoluciones.forEach(d => d.items.forEach(i => { if (i.razon in porRazon) porRazon[i.razon] += i.cantidadKg; }));
+
+    const rows = Object.entries(perdidas).map(([id, g]) => ({
+      productTypeId: id,
+      nombre: g.nombre,
+      totalKg: round2(g.totalKg),
+      numDevoluciones: g.count,
+      numClientes: g.clientes.size,
+    })).sort((a, b) => b.totalKg - a.totalKg);
+
+    res.json({
+      rows,
+      totalDevoluciones: devoluciones.length,
+      totalKgDevuelto: round2(totalKg),
+      porRazon: {
+        CLIENTE_RECHAZO: round2(porRazon.CLIENTE_RECHAZO),
+        VENCIDO: round2(porRazon.VENCIDO),
+        MAL_ESTADO: round2(porRazon.MAL_ESTADO),
+        EXCESO: round2(porRazon.EXCESO),
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al generar reporte" });
+  }
+});
+
+// GET /reportes/rotacion — rotación de productos (RF-46)
+router.get("/rotacion", async (req: AuthRequest, res) => {
+  const { desde, hasta } = req.query as Record<string, string>;
+  const { from, to } = parseDateRange(desde, hasta);
+  const dias = Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+
+  try {
+    const [items, tipos] = await Promise.all([
+      prisma.itemVenta.findMany({
+        where: { venta: { createdAt: { gte: from, lte: to }, estado: { not: "ANULADA" } } },
+        include: { productType: { select: { id: true, name: true } } },
+      }),
+      prisma.productType.findMany({
+        include: { entries: { where: { remainingKg: { gt: 0 } }, select: { remainingKg: true } } },
+      }),
+    ]);
+
+    const vendidoPorTipo: Record<string, { nombre: string; kgVendidos: number; numVentas: number }> = {};
+    for (const item of items) {
+      const key = item.productTypeId;
+      if (!vendidoPorTipo[key]) vendidoPorTipo[key] = { nombre: item.productType.name, kgVendidos: 0, numVentas: 0 };
+      vendidoPorTipo[key].kgVendidos += item.cantidadKg;
+      vendidoPorTipo[key].numVentas++;
+    }
+
+    const rows = tipos.map(t => {
+      const stockActual = t.entries.reduce((s, e) => s + e.remainingKg, 0);
+      const kgVendidos = vendidoPorTipo[t.id]?.kgVendidos ?? 0;
+      const kgPorDia = dias > 0 ? kgVendidos / dias : 0;
+      const coberturaDias = kgPorDia > 0 ? Math.round(stockActual / kgPorDia) : null;
+      return {
+        id: t.id,
+        nombre: t.name,
+        stockActual: round2(stockActual),
+        kgVendidos: round2(kgVendidos),
+        kgPorDia: round2(kgPorDia),
+        coberturaDias,
+        rotacion: kgVendidos === 0 ? "sin_movimiento" : kgPorDia > 5 ? "alta" : kgPorDia > 1 ? "media" : "baja",
+      };
+    }).sort((a, b) => b.kgVendidos - a.kgVendidos);
+
+    res.json({ rows, diasPeriodo: dias });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al generar reporte" });
+  }
+});
+
 export default router;

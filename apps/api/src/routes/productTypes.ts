@@ -16,7 +16,7 @@ router.get("/", requireAuth, async (_req: AuthRequest, res: Response): Promise<v
   res.json({ productTypes: types });
 });
 
-router.post("/", requireAuth, requireRole("Administrador"), async (req: AuthRequest, res: Response): Promise<void> => {
+router.post("/", requireAuth, requireRole("Administrador", "Secretaria"), async (req: AuthRequest, res: Response): Promise<void> => {
   const parsed = createSchema.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Datos inválidos" }); return; }
 
@@ -27,7 +27,7 @@ router.post("/", requireAuth, requireRole("Administrador"), async (req: AuthRequ
   res.status(201).json({ productType });
 });
 
-router.put("/:id", requireAuth, requireRole("Administrador"), async (req: AuthRequest, res: Response): Promise<void> => {
+router.put("/:id", requireAuth, requireRole("Administrador", "Secretaria"), async (req: AuthRequest, res: Response): Promise<void> => {
   const parsed = createSchema.partial().safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Datos inválidos" }); return; }
 

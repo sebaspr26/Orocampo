@@ -48,7 +48,7 @@ export default async function VentasPage() {
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">GESTIÓN COMERCIAL</span>
           <h2 className="text-4xl font-extrabold tracking-tighter text-[#1c1b1b]">Ventas y Facturación</h2>
         </section>
-        <VentasView initialVentas={ventas} clientes={clientes} productTypes={productTypes} />
+        <VentasView initialVentas={ventas} clientes={clientes} productTypes={productTypes} userRole={user.role} />
       </div>
     </AppLayout>
   );

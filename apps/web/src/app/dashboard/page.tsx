@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import { getSession, getToken } from "@/lib/session";
 import AppLayout from "@/components/layout/AppLayout";
+import { StatCard } from "@/components/ui";
 import { formatWeight } from "@/lib/format";
+import MotoAlertBanner from "@/components/admin/motos/MotoAlertBanner";
+import StockAlertBanner from "@/components/inventario/StockAlertBanner";
 
 const API_URL = process.env.API_URL ?? "http://localhost:4001";
 
@@ -132,68 +135,56 @@ export default async function DashboardPage() {
 
   // Root Dashboard
   if (isRoot) {
+    const totalAlertas = lowStockAlerts.length + expiryAlerts.length;
     return (
       <AppLayout user={user}>
+        <MotoAlertBanner sessionKey="dash-moto" />
+        <StockAlertBanner sessionKey="dash-stock" />
         <section className="flex flex-col gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">Entorno ROOT</span>
-          <h2 className="text-4xl font-extrabold tracking-tighter text-[#1c1b1b]">Vista General del Sistema</h2>
+          <span className="page-eyebrow">Entorno Root</span>
+          <h2 className="page-title">Vista General del Sistema</h2>
         </section>
 
-        {/* Metrics Grid */}
         <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-[2rem] border border-transparent flex flex-col gap-4 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/10 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
-            </div>
-            <div>
-              <p className="text-stone-500 text-xs font-semibold uppercase tracking-wider">Usuarios Totales</p>
-              <h3 className="text-3xl font-black text-[#1c1b1b] tracking-tighter">{(users as User[]).length}</h3>
-            </div>
-            <div className="flex items-center gap-1 text-emerald-600 text-xs font-bold">
-              <span className="material-symbols-outlined text-sm">trending_up</span>
-              <span>{activeUsers} activos</span>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-4 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/10 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
-            </div>
-            <div>
-              <p className="text-stone-500 text-xs font-semibold uppercase tracking-wider">Activos Ahora</p>
-              <h3 className="text-3xl font-black text-[#1c1b1b] tracking-tighter">{activeUsers}</h3>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-stone-400 text-[10px] font-medium italic">Sistema operacional</span>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-4 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-[#d4af37]/10 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>shield_person</span>
-            </div>
-            <div>
-              <p className="text-stone-500 text-xs font-semibold uppercase tracking-wider">Alertas Activas</p>
-              <h3 className="text-3xl font-black text-[#1c1b1b] tracking-tighter">{lowStockAlerts.length + expiryAlerts.length}</h3>
-            </div>
-            {(lowStockAlerts.length + expiryAlerts.length) > 0 ? (
-              <span className="text-[10px] font-bold text-[#ba1a1a]">{lowStockAlerts.length} stock bajo, {expiryAlerts.length} por vencer</span>
-            ) : (
-              <span className="text-[10px] font-bold text-emerald-600">Sin alertas críticas</span>
-            )}
-          </div>
-
-          <div className="bg-[#d4af37] p-6 rounded-[2rem] flex flex-col gap-4 shadow-xl shadow-[#d4af37]/20">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-              <span className="material-symbols-outlined text-white" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
-            </div>
-            <div>
-              <p className="text-white/80 text-xs font-semibold uppercase tracking-wider">Tipos de Producto</p>
-              <h3 className="text-3xl font-black text-white tracking-tighter">{(summary as SummaryItem[]).length}</h3>
-            </div>
-            <span className="text-white/70 text-[10px] font-bold">En inventario activo</span>
-          </div>
+          <StatCard
+            label="Usuarios Totales"
+            value={(users as User[]).length}
+            icon="group"
+            footer={
+              <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+                <span className="material-symbols-outlined" style={{ fontSize: "0.875rem" }}>trending_up</span>
+                {activeUsers} activos
+              </span>
+            }
+          />
+          <StatCard
+            label="Activos Ahora"
+            value={activeUsers}
+            icon="bolt"
+            footer={
+              <span className="flex items-center gap-2 text-[10px] text-[#7f7663]">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                Sistema operacional
+              </span>
+            }
+          />
+          <StatCard
+            label="Alertas Activas"
+            value={totalAlertas}
+            icon="shield_person"
+            footer={
+              totalAlertas > 0
+                ? <span className="text-[10px] font-bold text-[#ba1a1a]">{lowStockAlerts.length} stock bajo, {expiryAlerts.length} por vencer</span>
+                : <span className="text-[10px] font-bold text-emerald-600">Sin alertas críticas</span>
+            }
+          />
+          <StatCard
+            label="Tipos de Producto"
+            value={(summary as SummaryItem[]).length}
+            icon="inventory_2"
+            variant="gold"
+            footer={<span className="text-[10px] font-semibold text-white/70">En inventario activo</span>}
+          />
         </section>
 
         {/* Users List + Inventory Alerts */}
@@ -310,54 +301,52 @@ export default async function DashboardPage() {
 
     return (
       <AppLayout user={user}>
+        <MotoAlertBanner sessionKey="dash-moto" />
+        <StockAlertBanner sessionKey="dash-stock" />
         <div className="space-y-8">
           <section className="flex flex-col md:flex-row justify-between items-end gap-4">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">Panel de Control</span>
-              <h2 className="text-4xl font-extrabold tracking-tighter text-[#1c1b1b] mt-1">Dashboard</h2>
+              <span className="page-eyebrow">Panel de Control</span>
+              <h2 className="page-title mt-1">Dashboard</h2>
             </div>
-            <div className="bg-[#f6f3f2] px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-semibold capitalize">
-              <span className="material-symbols-outlined text-[#d4af37]">calendar_today</span>
+            <div className="bg-white border border-[#1c1b1b]/[0.055] px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-semibold capitalize shadow-sm">
+              <span className="material-symbols-outlined text-[#d4af37]" style={{ fontSize: "1rem" }}>calendar_today</span>
               {today}
             </div>
           </section>
 
           {/* KPIs */}
           <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[#d4af37] p-6 rounded-[2rem] text-white flex flex-col gap-3 shadow-xl shadow-[#d4af37]/20 col-span-2 md:col-span-1">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
-              <div>
-                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">Recaudado Hoy</p>
-                <h3 className="text-2xl font-black">${(resumen?.totalHoy ?? 0).toLocaleString("es-CO")}</h3>
-              </div>
-              <p className="text-white/60 text-[10px]">Efectivo: ${(resumen?.efectivoHoy ?? 0).toLocaleString("es-CO")}</p>
-            </div>
-            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
-              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>receipt_long</span>
-              <div>
-                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Ventas Hoy</p>
-                <h3 className="text-2xl font-black text-[#1c1b1b]">{ventasHoy.length}</h3>
-              </div>
-              <p className="text-[#7f7663] text-[10px]">${totalVentasHoy.toLocaleString("es-CO")} en total</p>
-            </div>
-            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
-              <span className="material-symbols-outlined text-[#ba1a1a]" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance_wallet</span>
-              <div>
-                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Cartera Pendiente</p>
-                <h3 className="text-2xl font-black text-[#ba1a1a]">${(resumen?.carteraPendiente ?? 0).toLocaleString("es-CO")}</h3>
-              </div>
-              <p className="text-[#7f7663] text-[10px]">{ventasPendientes.length} venta(s) sin pagar</p>
-            </div>
-            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
-              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
-              <div>
-                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Alertas Stock</p>
-                <h3 className="text-2xl font-black text-[#1c1b1b]">{lowStockAlerts.length + expiryAlerts.length}</h3>
-              </div>
-              <p className={`text-[10px] font-semibold ${lowStockAlerts.length > 0 ? "text-[#ba1a1a]" : "text-emerald-600"}`}>
-                {lowStockAlerts.length > 0 ? `${lowStockAlerts.length} producto(s) bajo mínimo` : "Inventario en orden"}
-              </p>
-            </div>
+            <StatCard
+              label="Recaudado Hoy"
+              value={`$${(resumen?.totalHoy ?? 0).toLocaleString("es-CO")}`}
+              icon="payments"
+              variant="gold"
+              className="col-span-2 md:col-span-1"
+              footer={<span className="text-[10px] text-white/65">Efectivo: ${(resumen?.efectivoHoy ?? 0).toLocaleString("es-CO")}</span>}
+            />
+            <StatCard
+              label="Ventas Hoy"
+              value={ventasHoy.length}
+              icon="receipt_long"
+              footer={<span className="text-[10px] text-[#7f7663]">${totalVentasHoy.toLocaleString("es-CO")} en total</span>}
+            />
+            <StatCard
+              label="Cartera Pendiente"
+              value={`$${(resumen?.carteraPendiente ?? 0).toLocaleString("es-CO")}`}
+              icon="account_balance_wallet"
+              footer={<span className="text-[10px] text-[#7f7663]">{ventasPendientes.length} venta(s) sin pagar</span>}
+            />
+            <StatCard
+              label="Alertas Stock"
+              value={lowStockAlerts.length + expiryAlerts.length}
+              icon="inventory_2"
+              footer={
+                <span className={`text-[10px] font-semibold ${lowStockAlerts.length > 0 ? "text-[#ba1a1a]" : "text-emerald-600"}`}>
+                  {lowStockAlerts.length > 0 ? `${lowStockAlerts.length} producto(s) bajo mínimo` : "Inventario en orden"}
+                </span>
+              }
+            />
           </section>
 
           {/* Ventas recientes + Inventario */}
@@ -423,14 +412,15 @@ export default async function DashboardPage() {
   if (isSecretaria) {
     return (
       <AppLayout user={user}>
+        <StockAlertBanner sessionKey="dash-stock" />
         <div className="space-y-8">
           <section className="flex flex-col md:flex-row justify-between items-end gap-4">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">Operaciones</span>
-              <h2 className="text-4xl font-extrabold tracking-tighter text-[#1c1b1b] mt-1">Bienvenida</h2>
+              <span className="page-eyebrow">Operaciones</span>
+              <h2 className="page-title mt-1">Bienvenida</h2>
             </div>
-            <div className="bg-[#f6f3f2] px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-semibold capitalize">
-              <span className="material-symbols-outlined text-[#d4af37]">calendar_today</span>
+            <div className="bg-white border border-[#1c1b1b]/[0.055] px-5 py-2.5 rounded-2xl flex items-center gap-2 text-sm font-semibold capitalize shadow-sm">
+              <span className="material-symbols-outlined text-[#d4af37]" style={{ fontSize: "1rem" }}>calendar_today</span>
               {today}
             </div>
           </section>
@@ -455,34 +445,14 @@ export default async function DashboardPage() {
 
           {/* KPIs operacionales */}
           <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[#d4af37] p-6 rounded-[2rem] text-white flex flex-col gap-3 shadow-xl shadow-[#d4af37]/20">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
-              <div>
-                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">Tipos en Stock</p>
-                <h3 className="text-2xl font-black">{(summary as SummaryItem[]).length}</h3>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
-              <span className="material-symbols-outlined text-[#ba1a1a]" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
-              <div>
-                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Stock Bajo</p>
-                <h3 className="text-2xl font-black text-[#1c1b1b]">{lowStockAlerts.length}</h3>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
-              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>timer</span>
-              <div>
-                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Por Vencer</p>
-                <h3 className="text-2xl font-black text-[#1c1b1b]">{expiryAlerts.length}</h3>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-[2rem] flex flex-col gap-3 shadow-sm border border-[#1c1b1b]/5">
-              <span className="material-symbols-outlined text-[#735c00]" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
-              <div>
-                <p className="text-[#7f7663] text-xs font-semibold uppercase tracking-wider">Recaudado Hoy</p>
-                <h3 className="text-2xl font-black text-[#1c1b1b]">${(resumen?.totalHoy ?? 0).toLocaleString("es-CO")}</h3>
-              </div>
-            </div>
+            <StatCard label="Tipos en Stock" value={(summary as SummaryItem[]).length} icon="inventory_2" variant="gold" />
+            <StatCard label="Stock Bajo" value={lowStockAlerts.length} icon="warning" />
+            <StatCard label="Por Vencer" value={expiryAlerts.length} icon="timer" />
+            <StatCard
+              label="Recaudado Hoy"
+              value={`$${(resumen?.totalHoy ?? 0).toLocaleString("es-CO")}`}
+              icon="payments"
+            />
           </section>
 
           {/* Inventario actual */}
@@ -541,9 +511,9 @@ export default async function DashboardPage() {
       <AppLayout user={user}>
         <div className="space-y-6">
           <section>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00]">Ruta del día</span>
-            <h2 className="text-3xl font-extrabold tracking-tighter text-[#1c1b1b] mt-1">Hola, {user.name ?? user.email}</h2>
-            <p className="text-sm text-[#7f7663] mt-1 capitalize">{today}</p>
+            <span className="page-eyebrow">Ruta del día</span>
+            <h2 className="page-title mt-1">Hola, {user.name ?? user.email}</h2>
+            <p className="page-subtitle mt-1 capitalize">{today}</p>
           </section>
 
           <section className="grid grid-cols-2 gap-4">
@@ -586,11 +556,11 @@ export default async function DashboardPage() {
         {/* Hero Header */}
         <section className="flex flex-col md:flex-row justify-between items-end gap-6">
           <div>
-            <span className="text-[#735c00] font-bold tracking-[0.2em] text-[10px] uppercase">PANEL DE CONTROL</span>
-            <h2 className="text-4xl font-extrabold tracking-tighter text-[#1c1b1b] mt-2">Visión General</h2>
+            <span className="page-eyebrow">Panel de Control</span>
+            <h2 className="page-title mt-2">Visión General</h2>
           </div>
-          <div className="bg-[#f6f3f2] px-6 py-3 rounded-2xl flex items-center gap-3 shadow-sm">
-            <span className="material-symbols-outlined text-[#d4af37]">calendar_today</span>
+          <div className="bg-white border border-[#1c1b1b]/[0.055] px-6 py-3 rounded-2xl flex items-center gap-3 shadow-sm">
+            <span className="material-symbols-outlined text-[#d4af37]" style={{ fontSize: "1rem" }}>calendar_today</span>
             <span className="text-sm font-semibold capitalize">{today}</span>
           </div>
         </section>

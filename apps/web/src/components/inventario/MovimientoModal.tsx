@@ -15,7 +15,7 @@ interface Props { entries: Entry[]; onClose: () => void; onSaved: () => void; }
 
 export default function MovimientoModal({ entries, onClose, onSaved }: Props) {
   const [entryId, setEntryId] = useState(entries[0]?.id ?? "");
-  const [type, setType] = useState<"ENTRADA" | "SALIDA" | "AJUSTE">("SALIDA");
+  const [type, setType] = useState<"ENTRADA" | "SALIDA" | "AJUSTE" | "BAJA">("SALIDA");
   const [quantityKg, setQuantityKg] = useState("");
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
@@ -76,12 +76,17 @@ export default function MovimientoModal({ entries, onClose, onSaved }: Props) {
           <label className="input-label">Tipo de movimiento</label>
           <select
             value={type}
-            onChange={(e) => setType(e.target.value as typeof type)}
+            onChange={(e) => {
+              const v = e.target.value as typeof type;
+              setType(v);
+              if (v === "BAJA" && !reason) setReason("Producto vencido / mal estado");
+            }}
             className="input bg-white"
           >
             <option value="SALIDA">Salida</option>
             <option value="ENTRADA">Entrada adicional</option>
-            <option value="AJUSTE">Ajuste</option>
+            <option value="AJUSTE">Ajuste de inventario</option>
+            <option value="BAJA">Baja (vencido / mal estado)</option>
           </select>
         </div>
 

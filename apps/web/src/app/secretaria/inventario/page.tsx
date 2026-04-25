@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession, getToken } from "@/lib/session";
 import AppLayout from "@/components/layout/AppLayout";
 import InventarioView from "@/components/inventario/InventarioView";
+import StockAlertBanner from "@/components/inventario/StockAlertBanner";
 
 const API_URL = process.env.API_URL ?? "http://localhost:4001";
 
@@ -28,6 +29,7 @@ export default async function InventarioPage() {
 
   return (
     <AppLayout user={user}>
+      <StockAlertBanner sessionKey="inv-stock" />
       <div className="space-y-8">
         <section className="flex flex-col gap-1">
           <span className="page-eyebrow">Gestión de Stock</span>

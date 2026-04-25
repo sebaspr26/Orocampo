@@ -35,10 +35,7 @@ export default function Modal({ title, onClose, children, size = "md" }: ModalPr
         className={`bg-white rounded-[2rem] shadow-2xl shadow-black/10 w-full ${sizeClass[size]} max-h-[90vh] overflow-y-auto`}
       >
         <div className="flex items-center justify-between p-8 pb-6">
-          <h3
-            className="text-xl font-bold text-[#1c1b1b]"
-            style={{ fontFamily: "var(--font-manrope), sans-serif" }}
-          >
+          <h3 className="text-xl font-bold tracking-[-0.02em] text-[#1c1b1b]">
             {title}
           </h3>
           <button

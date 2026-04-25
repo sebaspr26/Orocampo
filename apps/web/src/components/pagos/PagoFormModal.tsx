@@ -30,6 +30,7 @@ export default function PagoFormModal({ clientes, ventas, onClose, onSaved }: Pr
   const [monto, setMonto] = useState("");
   const [metodoPago, setMetodoPago] = useState("EFECTIVO");
   const [notas, setNotas] = useState("");
+  const [comprobante, setComprobante] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +46,7 @@ export default function PagoFormModal({ clientes, ventas, onClose, onSaved }: Pr
       const res = await fetch("/api/pagos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clienteId, ventaId: ventaId || undefined, monto: parseFloat(monto), metodoPago, notas }),
+        body: JSON.stringify({ clienteId, ventaId: ventaId || undefined, monto: parseFloat(monto), metodoPago, notas, comprobante }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Error al guardar"); return; }
@@ -111,6 +112,32 @@ export default function PagoFormModal({ clientes, ventas, onClose, onSaved }: Pr
                 <option value="EFECTIVO">Efectivo</option>
                 <option value="TRANSFERENCIA">Transferencia</option>
               </select>
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>Comprobante de pago (opcional)</label>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 bg-[#f6f3f2] rounded-2xl px-4 py-3 cursor-pointer hover:bg-[#eae7e7] transition-colors">
+                <span className="material-symbols-outlined text-[#735c00] text-lg">attach_file</span>
+                <span className="text-sm text-[#7f7663]">{comprobante ? "Imagen cargada" : "Adjuntar imagen del comprobante"}</span>
+                <input type="file" accept="image/*" className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onloadend = () => setComprobante(reader.result as string);
+                    reader.readAsDataURL(file);
+                  }} />
+              </label>
+              {comprobante && (
+                <div className="relative">
+                  <img src={comprobante} alt="Comprobante" className="w-full max-h-32 object-cover rounded-xl" />
+                  <button type="button" onClick={() => setComprobante(null)}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 flex items-center justify-center text-[#ba1a1a]">
+                    <span className="material-symbols-outlined text-sm">close</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           <div>

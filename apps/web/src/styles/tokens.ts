@@ -29,8 +29,8 @@ export const color = {
 } as const;
 
 export const font = {
-  headline: 'var(--font-manrope), sans-serif',
-  body: 'var(--font-inter), sans-serif',
+  headline: 'var(--font-headline)',
+  body: 'var(--font-body)',
 } as const;
 
 export type Color = keyof typeof color;

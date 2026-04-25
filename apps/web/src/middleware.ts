@@ -31,6 +31,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const roleRoutes: Array<{ path: string; roles: string[] }> = [
+      { path: "/admin/motos", roles: ["Root", "Administrador"] },
       { path: "/admin", roles: ["Root"] },
       { path: "/secretaria", roles: ["Secretaria", "Administrador"] },
     ];

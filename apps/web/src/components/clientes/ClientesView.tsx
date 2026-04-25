@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import ClienteFormModal from "./ClienteFormModal";
+import EstadoCuentaModal from "./EstadoCuentaModal";
 
 interface Cliente {
   id: string;
@@ -12,12 +13,15 @@ interface Cliente {
   isActive: boolean;
   carteraPendiente: number;
   ventasPendientes: number;
+  tipoClienteId?: string | null;
+  tipoCliente?: { id: string; nombre: string } | null;
 }
 
 export default function ClientesView({ initialClientes }: { initialClientes: Cliente[] }) {
   const [clientes, setClientes] = useState<Cliente[]>(initialClientes);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Cliente | null>(null);
+  const [estadoCuentaCliente, setEstadoCuentaCliente] = useState<{ id: string; nombre: string } | null>(null);
   const [search, setSearch] = useState("");
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
@@ -124,6 +128,7 @@ export default function ClientesView({ initialClientes }: { initialClientes: Cli
               <thead>
                 <tr className="bg-[#f6f3f2] text-[#7f7663] text-[10px] uppercase tracking-widest">
                   <th className="px-6 py-4 text-left font-bold">Cliente</th>
+                  <th className="px-6 py-4 text-left font-bold">Tipo</th>
                   <th className="px-6 py-4 text-left font-bold">Contacto</th>
                   <th className="px-6 py-4 text-left font-bold">Dirección</th>
                   <th className="px-6 py-4 text-right font-bold">Cartera</th>
@@ -145,6 +150,15 @@ export default function ClientesView({ initialClientes }: { initialClientes: Cli
                         </div>
                       </div>
                     </td>
+                    <td className="px-6 py-4">
+                      {c.tipoCliente ? (
+                        <span className="text-[10px] font-bold px-3 py-1.5 rounded-full bg-[#d4af37]/20 text-[#735c00]">
+                          {c.tipoCliente.nombre}
+                        </span>
+                      ) : (
+                        <span className="text-[#d0c5af] text-xs">—</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-[#4d4635]">
                       <p>{c.telefono ?? "—"}</p>
                       <p className="text-xs text-[#7f7663]">{c.email ?? ""}</p>
@@ -162,6 +176,9 @@ export default function ClientesView({ initialClientes }: { initialClientes: Cli
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
+                        <button onClick={() => setEstadoCuentaCliente({ id: c.id, nombre: c.nombre })} className="p-2 text-[#735c00] hover:bg-[#d4af37]/10 rounded-xl transition-colors" title="Estado de cuenta">
+                          <span className="material-symbols-outlined text-sm">account_balance_wallet</span>
+                        </button>
                         <button onClick={() => handleEdit(c)} className="p-2 text-[#735c00] hover:bg-[#d4af37]/10 rounded-xl transition-colors" title="Editar">
                           <span className="material-symbols-outlined text-sm">edit</span>
                         </button>
@@ -179,6 +196,13 @@ export default function ClientesView({ initialClientes }: { initialClientes: Cli
       </div>
 
       {modalOpen && <ClienteFormModal cliente={editing} onClose={() => setModalOpen(false)} onSaved={handleSaved} />}
+      {estadoCuentaCliente && (
+        <EstadoCuentaModal
+          clienteId={estadoCuentaCliente.id}
+          clienteNombre={estadoCuentaCliente.nombre}
+          onClose={() => setEstadoCuentaCliente(null)}
+        />
+      )}
     </>
   );
 }

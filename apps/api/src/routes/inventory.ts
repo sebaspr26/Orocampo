@@ -155,7 +155,7 @@ router.get("/movements", requireAuth, requireRole("Administrador", "Secretaria")
 // POST /inventory/movements — register manual entry/exit
 const movementSchema = z.object({
   entryId: z.string(),
-  type: z.enum(["ENTRADA", "SALIDA", "AJUSTE"]),
+  type: z.enum(["ENTRADA", "SALIDA", "AJUSTE", "BAJA"]),
   quantityKg: z.number().positive(),
   reason: z.string().optional(),
 });
@@ -169,7 +169,7 @@ router.post("/movements", requireAuth, requireRole("Secretaria", "Administrador"
   const entry = await prisma.inventoryEntry.findUnique({ where: { id: entryId } });
   if (!entry) { res.status(404).json({ error: "Lote no encontrado" }); return; }
 
-  if (type === "SALIDA" && entry.remainingKg < quantityKg) {
+  if ((type === "SALIDA" || type === "BAJA") && entry.remainingKg < quantityKg) {
     res.status(400).json({ error: `Stock insuficiente. Disponible: ${entry.remainingKg} kg` }); return;
   }
 

@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface TipoCliente { id: string; nombre: string; }
 
 interface Cliente {
   id: string;
@@ -11,6 +13,8 @@ interface Cliente {
   isActive: boolean;
   carteraPendiente: number;
   ventasPendientes: number;
+  tipoClienteId?: string | null;
+  tipoCliente?: { id: string; nombre: string } | null;
 }
 
 interface Props {
@@ -26,8 +30,17 @@ export default function ClienteFormModal({ cliente, onClose, onSaved }: Props) {
   const [email, setEmail] = useState(cliente?.email ?? "");
   const [direccion, setDireccion] = useState(cliente?.direccion ?? "");
   const [notas, setNotas] = useState(cliente?.notas ?? "");
+  const [tipoClienteId, setTipoClienteId] = useState(cliente?.tipoClienteId ?? "");
+  const [tipos, setTipos] = useState<TipoCliente[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/tipos-cliente")
+      .then(r => r.json())
+      .then(d => setTipos(d.tipos ?? []))
+      .catch(() => {});
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,7 +50,7 @@ export default function ClienteFormModal({ cliente, onClose, onSaved }: Props) {
       const res = await fetch(isEdit ? `/api/clientes/${cliente.id}` : "/api/clientes", {
         method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, telefono, email, direccion, notas }),
+        body: JSON.stringify({ nombre, telefono, email, direccion, notas, tipoClienteId: tipoClienteId || null }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Error al guardar"); return; }
@@ -89,6 +102,13 @@ export default function ClienteFormModal({ cliente, onClose, onSaved }: Props) {
           <div>
             <label className={labelClass}>Dirección</label>
             <input type="text" value={direccion} onChange={e => setDireccion(e.target.value)} placeholder="Ej: Cra 15 #23-45, Barrio Centro" className={inputClass} />
+          </div>
+          <div>
+            <label className={labelClass}>Tipo de cliente</label>
+            <select value={tipoClienteId} onChange={e => setTipoClienteId(e.target.value)} className={`${inputClass} bg-[#f6f3f2]`}>
+              <option value="">Sin tipo asignado</option>
+              {tipos.map(t => <option key={t.id} value={t.id}>{t.nombre}</option>)}
+            </select>
           </div>
           <div>
             <label className={labelClass}>Notas</label>

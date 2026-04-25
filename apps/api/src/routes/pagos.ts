@@ -57,7 +57,7 @@ router.get("/resumen", requireRole("Root", "Administrador", "Secretaria"), async
 
 // POST /pagos
 router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario"), async (req: AuthRequest, res) => {
-  const { clienteId, ventaId, monto, metodoPago, notas } = req.body;
+  const { clienteId, ventaId, monto, metodoPago, notas, comprobante } = req.body;
 
   if (!clienteId || !monto || !metodoPago) {
     res.status(400).json({ error: "clienteId, monto y metodoPago son requeridos" });
@@ -73,6 +73,7 @@ router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliari
           monto: parseFloat(monto),
           metodoPago,
           notas,
+          comprobante: comprobante || null,
           createdById: req.user!.id,
         },
         include: {
