@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'tabs/dashboard_tab.dart';
 import 'tabs/ventas_tab.dart';
 import 'tabs/pagos_tab.dart';
+import '../services/notification_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const _darkGold = Color(0xFF735C00);
 
   int _currentIndex = 0;
+  bool _testingNotifs = false;
 
   final _tabs = const [DashboardTab(), VentasTab(), PagosTab()];
 
@@ -42,8 +44,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Color(0xFF1C1B1B)),
-            onPressed: () {},
+            icon: Icon(
+              _testingNotifs ? Icons.notifications_active : Icons.notifications_outlined,
+              color: _testingNotifs ? _gold : const Color(0xFF1C1B1B),
+            ),
+            onPressed: () {
+              final service = NotificationService.instance;
+              setState(() => _testingNotifs = !_testingNotifs);
+              if (_testingNotifs) {
+                service.startTest();
+              } else {
+                service.stopTest();
+              }
+            },
           ),
           GestureDetector(
             onTap: _logout,

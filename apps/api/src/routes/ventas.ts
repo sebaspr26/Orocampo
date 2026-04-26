@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth, requireRole, AuthRequest } from "../middleware/auth";
 
@@ -7,7 +7,7 @@ const router = Router();
 router.use(requireAuth);
 
 // GET /ventas
-router.get("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario"), async (req: AuthRequest, res) => {
+router.get("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario"), async (req: AuthRequest, res: Response) => {
   try {
     const isDomiciliario = req.user!.role === "Domiciliario";
     const ventas = await prisma.venta.findMany({
@@ -36,7 +36,7 @@ router.get("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario
 });
 
 // POST /ventas
-router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario"), async (req: AuthRequest, res) => {
+router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario"), async (req: AuthRequest, res: Response) => {
   const { clienteId, metodoPago, notas, items } = req.body;
 
   if (!clienteId || !metodoPago || !items || items.length === 0) {
@@ -161,7 +161,7 @@ router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliari
 });
 
 // PATCH /ventas/:id/estado
-router.patch("/:id/estado", requireRole("Root", "Administrador", "Secretaria"), async (req, res) => {
+router.patch("/:id/estado", requireRole("Root", "Administrador", "Secretaria"), async (req: AuthRequest, res: Response) => {
   const { estado } = req.body;
   if (!["PENDIENTE", "PAGADA", "ANULADA"].includes(estado)) {
     res.status(400).json({ error: "Estado inválido" });
