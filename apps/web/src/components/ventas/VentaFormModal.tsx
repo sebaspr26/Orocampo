@@ -10,6 +10,7 @@ interface Venta {
   id: string;
   clienteId: string;
   cliente: { id: string; nombre: string; esMostrador?: boolean };
+  createdBy?: { id: string; name: string | null };
   fecha: string;
   metodoPago: string;
   estado: string;
