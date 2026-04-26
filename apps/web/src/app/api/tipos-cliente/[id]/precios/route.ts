@@ -3,10 +3,11 @@ import { getToken } from "@/lib/session";
 
 const API_URL = process.env.API_URL ?? "http://localhost:4001";
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const token = await getToken();
   const body = await req.json();
-  const res = await fetch(`${API_URL}/tipos-cliente/${params.id}/precios`, {
+  const res = await fetch(`${API_URL}/tipos-cliente/${id}/precios`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),
