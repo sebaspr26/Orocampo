@@ -18,6 +18,7 @@ class AuthProvider extends ChangeNotifier {
   bool get initialized => _initialized;
 
   Future<void> init() async {
+    await AuthService.instance.getDeviceToken();
     final authenticated = await AuthService.instance.isAuthenticated();
     if (authenticated) {
       _user = AuthService.instance.currentUser;
@@ -32,15 +33,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final deviceToken = await AuthService.instance.getDeviceToken();
       final res = await ApiService.instance.dio.post(
         '/auth/login',
-        data: {'email': email, 'password': password},
+        data: {
+          'email': email,
+          'password': password,
+          'platform': 'mobile',
+          'deviceToken': deviceToken,
+        },
       );
 
       final data = res.data;
       final user = User.fromJson(data['user']);
-
-
 
       await AuthService.instance.saveSession(data['token'], user);
       _user = user;
@@ -68,6 +73,10 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    // Notificar al backend para liberar la sesión móvil
+    try {
+      await ApiService.instance.post('/auth/logout');
+    } catch (_) {}
     await AuthService.instance.logout();
     await DbService.instance.clearAll();
     _user = null;

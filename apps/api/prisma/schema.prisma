@@ -30,6 +30,7 @@ model User {
   ventasCreadas     Venta[]    @relation("VentaCreador")
   rutasDomiciliario Ruta[]     @relation("RutaDomiciliario")
   locations         Location[]
+  mobileSession     MobileSession?
 }
 
 model ProductType {
@@ -257,6 +258,15 @@ model CorteCaja {
   estado             String   @default("CERRADO")
   createdById        String
   createdAt          DateTime @default(now())
+}
+
+model MobileSession {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  deviceToken  String   @unique
+  lastActivity DateTime @default(now())
+  createdAt    DateTime @default(now())
 }
 
 model Location {

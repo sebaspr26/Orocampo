@@ -3,14 +3,18 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
+import { requireAuth, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "orocampo-dev-secret-2024";
+const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
+  platform: z.enum(["mobile", "web"]).optional(),
+  deviceToken: z.string().optional(),
 });
 
 const registerSchema = z.object({
@@ -26,7 +30,7 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const { email, password } = parsed.data;
+  const { email, password, platform, deviceToken } = parsed.data;
 
   const user = await prisma.user.findUnique({
     where: { email },
@@ -47,6 +51,34 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
   if (!passwordMatch) {
     res.status(401).json({ error: "Credenciales incorrectas" });
     return;
+  }
+
+  // Restricción de sesión móvil única
+  if (platform === "mobile" && deviceToken) {
+    const existing = await prisma.mobileSession.findUnique({ where: { userId: user.id } });
+
+    if (existing) {
+      const inactive = Date.now() - existing.lastActivity.getTime() > SEVEN_DAYS;
+
+      if (inactive) {
+        // Sesión expirada por inactividad, permitir nuevo login
+        await prisma.mobileSession.delete({ where: { id: existing.id } });
+      } else if (existing.deviceToken !== deviceToken) {
+        // Otro dispositivo activo
+        res.status(409).json({
+          error: "Ya hay una sesión activa en otro dispositivo. Contacta al administrador para cerrarla.",
+          code: "DEVICE_CONFLICT",
+        });
+        return;
+      }
+      // Mismo dispositivo → actualizar
+    }
+
+    await prisma.mobileSession.upsert({
+      where: { userId: user.id },
+      update: { deviceToken, lastActivity: new Date() },
+      create: { userId: user.id, deviceToken },
+    });
   }
 
   const token = jwt.sign(
@@ -70,6 +102,16 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
       isActive: user.isActive,
     },
   });
+});
+
+// POST /auth/logout — eliminar sesión móvil
+router.post("/logout", requireAuth, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    await prisma.mobileSession.deleteMany({ where: { userId: req.user!.id } });
+    res.json({ ok: true });
+  } catch {
+    res.json({ ok: true });
+  }
 });
 
 router.post("/register", async (req: Request, res: Response): Promise<void> => {

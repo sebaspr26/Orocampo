@@ -18,6 +18,7 @@ const rootNavItems: NavItem[] = [
   { href: "/dashboard", label: "Panel", icon: "dashboard", roles: ["Root"] },
   { href: "/admin/usuarios", label: "Usuarios", icon: "group", roles: ["Root"] },
   { href: "/admin/roles", label: "Roles y Permisos", icon: "verified_user", roles: ["Root"] },
+  { href: "/admin/sesiones", label: "Sesiones", icon: "devices", roles: ["Root"] },
   { href: "/admin/motos", label: "Motos", icon: "two_wheeler", roles: ["Root"] },
   { href: "/admin/ajustes", label: "Ajustes del Sistema", icon: "settings", roles: ["Root"] },
   { href: "/admin/logs", label: "Registros", icon: "history", roles: ["Root"] },

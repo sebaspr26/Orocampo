@@ -1,9 +1,21 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../config/app_theme.dart';
 import '../../services/api_service.dart';
+
+const _markerColors = [
+  Color(0xFFE53935), // rojo
+  Color(0xFF1E88E5), // azul
+  Color(0xFF43A047), // verde
+  Color(0xFFFF8F00), // naranja
+  Color(0xFF8E24AA), // morado
+  Color(0xFF00ACC1), // cyan
+  Color(0xFFD81B60), // rosa
+  Color(0xFF3949AB), // indigo
+];
 
 class AdminTracking extends StatefulWidget {
   const AdminTracking({super.key});
@@ -19,6 +31,9 @@ class _AdminTrackingState extends State<AdminTracking> {
   String? _selectedUserId;
   String? _selectedName;
   bool _loading = true;
+  bool _refreshCooldown = false;
+
+  Color _colorFor(int index) => _markerColors[index % _markerColors.length];
 
   @override
   void initState() {
@@ -68,6 +83,15 @@ class _AdminTrackingState extends State<AdminTracking> {
     } catch (_) {}
   }
 
+  Future<void> _manualRefresh() async {
+    if (_refreshCooldown) return;
+    setState(() => _refreshCooldown = true);
+    await _fetchLocations();
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) setState(() => _refreshCooldown = false);
+    });
+  }
+
   void _clearSelection() {
     setState(() {
       _selectedUserId = null;
@@ -91,6 +115,10 @@ class _AdminTrackingState extends State<AdminTracking> {
         ? LatLng(withLocation.first.lat!, withLocation.first.lng!)
         : const LatLng(4.6097, -74.0817);
 
+    // Color del domiciliario seleccionado para la polyline
+    final selectedIndex = _locations.indexWhere((l) => l.userId == _selectedUserId);
+    final routeColor = selectedIndex >= 0 ? _colorFor(selectedIndex) : AppColors.primaryDark;
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: _loading
@@ -107,53 +135,70 @@ class _AdminTrackingState extends State<AdminTracking> {
                     ),
                     if (_routeHistory.length > 1)
                       PolylineLayer(polylines: [
-                        Polyline(points: _routeHistory, color: AppColors.primaryDark, strokeWidth: 3),
+                        Polyline(points: _routeHistory, color: routeColor, strokeWidth: 4),
                       ]),
                     MarkerLayer(
-                      markers: withLocation.map((loc) => Marker(
-                        point: LatLng(loc.lat!, loc.lng!),
-                        width: 120,
-                        height: 56,
-                        child: GestureDetector(
-                          onTap: () => _fetchHistory(loc.userId, loc.name),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: _selectedUserId == loc.userId ? AppColors.primaryDark : Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 6)],
-                                ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      loc.name.split(' ').first,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: _selectedUserId == loc.userId ? Colors.white : AppColors.dark,
+                      markers: withLocation.asMap().entries.map((entry) {
+                        final i = _locations.indexOf(entry.value);
+                        final loc = entry.value;
+                        final color = _colorFor(i);
+                        final selected = _selectedUserId == loc.userId;
+                        return Marker(
+                          point: LatLng(loc.lat!, loc.lng!),
+                          width: 130,
+                          height: 80,
+                          alignment: Alignment.bottomCenter,
+                          child: GestureDetector(
+                            onTap: () => _fetchHistory(loc.userId, loc.name),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: color, width: selected ? 2.5 : 1.5),
+                                    boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 8, height: 8,
+                                        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
                                       ),
-                                    ),
-                                    Text(
-                                      _timeAgo(loc.updatedAt),
-                                      style: TextStyle(
-                                        fontSize: 9,
-                                        color: _selectedUserId == loc.userId ? Colors.white70 : AppColors.muted,
+                                      const SizedBox(width: 6),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            loc.name.split(' ').first,
+                                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: color),
+                                          ),
+                                          Text(
+                                            _timeAgo(loc.updatedAt),
+                                            style: const TextStyle(fontSize: 9, color: AppColors.muted),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Icon(Icons.location_on, color: AppColors.primaryDark, size: 22),
-                            ],
+                                CustomPaint(
+                                  size: const Size(14, 10),
+                                  painter: _ArrowPainter(color: color),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      )).toList(),
+                        );
+                      }).toList(),
                     ),
                   ],
                 ),
+                // Barra selección
                 if (_selectedName != null)
                   Positioned(
                     top: 12, left: 12, right: 12,
@@ -162,12 +207,16 @@ class _AdminTrackingState extends State<AdminTracking> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+                        border: Border.all(color: routeColor.withValues(alpha: 0.3)),
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10)],
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.route_rounded, color: AppColors.primaryDark, size: 20),
-                          const SizedBox(width: 8),
+                          Container(
+                            width: 10, height: 10,
+                            decoration: BoxDecoration(color: routeColor, shape: BoxShape.circle),
+                          ),
+                          const SizedBox(width: 10),
                           Expanded(child: Text('Ruta de $_selectedName', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.dark))),
                           Text('${_routeHistory.length} puntos', style: const TextStyle(fontSize: 12, color: AppColors.muted)),
                           const SizedBox(width: 8),
@@ -179,6 +228,73 @@ class _AdminTrackingState extends State<AdminTracking> {
                       ),
                     ),
                   ),
+                // Botón refresh
+                Positioned(
+                  bottom: 16, right: 16,
+                  child: GestureDetector(
+                    onTap: _manualRefresh,
+                    child: Container(
+                      width: 48, height: 48,
+                      decoration: BoxDecoration(
+                        color: _refreshCooldown ? AppColors.muted : AppColors.primaryDark,
+                        shape: BoxShape.circle,
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 2))],
+                      ),
+                      child: Icon(
+                        _refreshCooldown ? Icons.hourglass_top_rounded : Icons.refresh_rounded,
+                        color: Colors.white, size: 22,
+                      ),
+                    ),
+                  ),
+                ),
+                // Leyenda de colores
+                if (_locations.isNotEmpty)
+                  Positioned(
+                    bottom: 16, left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8)],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: _locations.asMap().entries.map((entry) {
+                          final color = _colorFor(entry.key);
+                          final loc = entry.value;
+                          final hasLoc = loc.lat != null;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 10, height: 10,
+                                  decoration: BoxDecoration(
+                                    color: hasLoc ? color : AppColors.muted,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  loc.name.split(' ').first,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: hasLoc ? AppColors.dark : AppColors.muted,
+                                  ),
+                                ),
+                                if (!hasLoc) const Text(' (offline)', style: TextStyle(fontSize: 9, color: AppColors.muted)),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                // Empty state
                 if (withLocation.isEmpty && !_loading)
                   Center(
                     child: Container(
@@ -201,6 +317,25 @@ class _AdminTrackingState extends State<AdminTracking> {
             ),
     );
   }
+}
+
+class _ArrowPainter extends CustomPainter {
+  final Color color;
+  const _ArrowPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color..style = PaintingStyle.fill;
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..lineTo(size.width, 0)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ArrowPainter old) => old.color != color;
 }
 
 class _DomiciliarioLocation {

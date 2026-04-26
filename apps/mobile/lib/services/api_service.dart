@@ -22,11 +22,20 @@ class ApiService {
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+        final deviceToken = AuthService.instance.deviceToken;
+        if (deviceToken != null) {
+          options.headers['X-Device-Token'] = deviceToken;
+        }
         handler.next(options);
       },
       onError: (error, handler) async {
         if (error.response?.statusCode == 401) {
-          await AuthService.instance.logout();
+          final code = error.response?.data?['code'];
+          if (code == 'SESSION_REVOKED' || code == 'SESSION_EXPIRED') {
+            await AuthService.instance.logout();
+          } else {
+            await AuthService.instance.logout();
+          }
         }
         handler.next(error);
       },
