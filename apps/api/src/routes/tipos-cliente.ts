@@ -91,9 +91,9 @@ router.post("/:id/precios", async (req: AuthRequest, res) => {
   }
   try {
     const result = await prisma.precioTipo.upsert({
-      where: { tipoClienteId_productTypeId: { tipoClienteId: req.params.id, productTypeId } },
+      where: { tipoClienteId_productTypeId: { tipoClienteId: req.params.id as string, productTypeId } },
       update: { precio, createdById: req.user!.id },
-      create: { tipoClienteId: req.params.id, productTypeId, precio, createdById: req.user!.id },
+      create: { tipoClienteId: req.params.id as string, productTypeId, precio, createdById: req.user!.id },
       include: { productType: { select: { id: true, name: true } } },
     });
     res.json({ precio: result });

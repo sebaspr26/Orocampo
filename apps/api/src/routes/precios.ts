@@ -61,7 +61,7 @@ router.get("/cliente/:clienteId", async (req, res) => {
 router.get("/historial/:clienteId", requireRole("Root", "Administrador", "Secretaria"), async (req, res) => {
   try {
     const historial = await prisma.historialPrecio.findMany({
-      where: { clienteId: req.params.clienteId },
+      where: { clienteId: req.params.clienteId as string },
       include: { productType: { select: { id: true, name: true } } },
       orderBy: { createdAt: "desc" },
     });
@@ -125,7 +125,7 @@ router.post("/", requireRole("Root", "Administrador", "Secretaria"), async (req:
 router.delete("/:id", requireRole("Root", "Administrador", "Secretaria"), async (req, res) => {
   try {
     await prisma.precioCliente.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { vigente: false },
     });
     res.json({ ok: true });
