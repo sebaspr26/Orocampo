@@ -23,7 +23,7 @@ router.post("/", requireAuth, requireRole("Administrador", "Secretaria"), async 
   const existing = await prisma.productType.findUnique({ where: { name: parsed.data.name } });
   if (existing) { res.status(409).json({ error: "Ya existe un tipo con ese nombre" }); return; }
 
-  const productType = await prisma.productType.create({ data: parsed.data });
+  const productType = await prisma.productType.create({ data: parsed.data as { name: string; description?: string; minStockKg?: number } });
   res.status(201).json({ productType });
 });
 

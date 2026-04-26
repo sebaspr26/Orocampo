@@ -44,14 +44,14 @@ router.post("/", requireAuth, requireRole("Root"), async (req: AuthRequest, res:
   }
 
   const notification = await prisma.notification.create({
-    data: { ...parsed.data, createdById: req.user!.id },
+    data: { title: parsed.data.title, message: parsed.data.message, targetRoles: parsed.data.targetRoles, createdById: req.user!.id },
   });
 
   res.status(201).json({ notification });
 });
 
 router.patch("/:id/read", requireAuth, async (req: AuthRequest, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const userId = req.user!.id;
 
   await prisma.notificationRead.upsert({

@@ -114,7 +114,7 @@ router.put("/:id", requireAuth, requireRole("Root"), async (req: AuthRequest, re
 });
 
 router.patch("/:id/toggle", requireAuth, requireRole("Root"), async (req: AuthRequest, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   if (req.user?.id === id) {
     res.status(400).json({ error: "No puedes desactivar tu propia cuenta" });
