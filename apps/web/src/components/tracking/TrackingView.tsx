@@ -14,12 +14,6 @@ interface HistoryPoint {
   createdAt: string;
 }
 
-declare global {
-  interface Window {
-    L: typeof import("leaflet");
-  }
-}
-
 function timeAgo(dateStr: string) {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (diff < 60) return `hace ${diff}s`;
@@ -29,9 +23,12 @@ function timeAgo(dateStr: string) {
 
 export default function TrackingView() {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<L.Map | null>(null);
-  const markersRef = useRef<L.Marker[]>([]);
-  const polylineRef = useRef<L.Polyline | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapInstance = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const markersRef = useRef<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const polylineRef = useRef<any>(null);
   const [locations, setLocations] = useState<DomiciliarioLocation[]>([]);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryPoint[]>([]);
@@ -92,7 +89,7 @@ export default function TrackingView() {
 
     function initMap() {
       if (!mapRef.current || mapInstance.current) return;
-      const L = window.L;
+      const L = (window as any).L;
       const map = L.map(mapRef.current).setView([4.6097, -74.0817], 13);
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap",
@@ -116,7 +113,7 @@ export default function TrackingView() {
 
   // Update markers
   useEffect(() => {
-    const L = window.L;
+    const L = (window as any).L;
     const map = mapInstance.current;
     if (!L || !map) return;
 
@@ -154,7 +151,7 @@ export default function TrackingView() {
 
   // Draw route history
   useEffect(() => {
-    const L = window.L;
+    const L = (window as any).L;
     const map = mapInstance.current;
     if (!L || !map) return;
 
