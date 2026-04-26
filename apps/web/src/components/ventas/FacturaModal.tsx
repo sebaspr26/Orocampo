@@ -11,7 +11,7 @@ interface ItemVenta {
 interface Venta {
   id: string;
   cliente: { nombre: string };
-  createdBy: { name: string | null };
+  createdBy?: { name: string | null };
   fecha: string;
   metodoPago: string;
   estado: string;
