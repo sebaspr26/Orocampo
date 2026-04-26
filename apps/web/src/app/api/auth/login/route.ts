@@ -3,16 +3,19 @@ import { NextRequest, NextResponse } from "next/server";
 const API_URL = process.env.API_URL ?? "http://localhost:4001";
 
 export async function POST(req: NextRequest) {
+  const apiUrl = process.env.API_URL ?? "http://localhost:4001";
   try {
     const body = await req.json();
 
-    const apiRes = await fetch(`${API_URL}/auth/login`, {
+    const apiRes = await fetch(`${apiUrl}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
 
-    const data = await apiRes.json();
+    const text = await apiRes.text();
+    let data;
+    try { data = JSON.parse(text); } catch { return NextResponse.json({ error: "API response not JSON", body: text, url: apiUrl }, { status: 502 }); }
 
     if (!apiRes.ok) {
       return NextResponse.json(data, { status: apiRes.status });
@@ -29,7 +32,7 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch {
-    return NextResponse.json({ error: "Error al conectar con el servidor" }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json({ error: "Error al conectar con el servidor", detail: String(err), apiUrl }, { status: 500 });
   }
 }
