@@ -94,7 +94,7 @@ async function main() {
   }
 
   // ── Clientes ───────────────────────────────────────────────────────────────
-  const clientesExistentes = await prisma.cliente.count();
+  const clientesExistentes = await prisma.cliente.count({ where: { esMostrador: false } });
   let clientes;
 
   if (clientesExistentes === 0) {

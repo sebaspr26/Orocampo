@@ -18,7 +18,6 @@ import cajaRouter from "./routes/caja";
 import motosRouter from "./routes/motos";
 
 const app = express();
-const PORT = process.env.PORT ?? 4001;
 
 app.use(cors({
   origin: process.env.WEB_URL ?? "http://localhost:4000",
@@ -47,6 +46,11 @@ app.use("/tipos-cliente", tiposClienteRouter);
 app.use("/caja", cajaRouter);
 app.use("/motos", motosRouter);
 
-app.listen(PORT, () => {
-  console.log(`API running on port ${PORT}`);
-});
+if (process.env.VERCEL !== "1") {
+  const PORT = process.env.PORT ?? 4001;
+  app.listen(PORT, () => {
+    console.log(`API running on port ${PORT}`);
+  });
+}
+
+export default app;
