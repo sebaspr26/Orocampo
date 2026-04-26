@@ -272,8 +272,8 @@ model Location {
 
 model AppSettings {
   id            String @id @default("global")
-  horarioInicio String @default("07:00")
-  horarioFin    String @default("17:00")
+  horarioInicio String @default("05:00")
+  horarioFin    String @default("22:00")
 }
 
 model Moto {

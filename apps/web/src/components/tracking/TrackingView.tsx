@@ -32,7 +32,7 @@ export default function TrackingView() {
   const [locations, setLocations] = useState<DomiciliarioLocation[]>([]);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryPoint[]>([]);
-  const [settings, setSettings] = useState({ horarioInicio: "07:00", horarioFin: "17:00" });
+  const [settings, setSettings] = useState({ horarioInicio: "05:00", horarioFin: "22:00" });
   const [editingSettings, setEditingSettings] = useState(false);
   const leafletLoaded = useRef(false);
 

@@ -16,10 +16,10 @@ router.post("/", requireRole("Domiciliario"), async (req: AuthRequest, res) => {
   try {
     // Verificar horario laboral
     const settings = await prisma.appSettings.findUnique({ where: { id: "global" } });
-    const inicio = settings?.horarioInicio ?? "07:00";
-    const fin = settings?.horarioFin ?? "17:00";
+    const inicio = settings?.horarioInicio ?? "05:00";
+    const fin = settings?.horarioFin ?? "22:00";
 
-    const now = new Date();
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Bogota" }));
     const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 
     if (hhmm < inicio || hhmm > fin) {

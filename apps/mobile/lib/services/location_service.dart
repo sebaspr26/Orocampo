@@ -10,8 +10,8 @@ class LocationService {
 
   Timer? _timer;
   bool _running = false;
-  String _horarioInicio = '07:00';
-  String _horarioFin = '17:00';
+  String _horarioInicio = '05:00';
+  String _horarioFin = '22:00';
 
   bool get isRunning => _running;
 
@@ -37,8 +37,8 @@ class LocationService {
     try {
       final res = await ApiService.instance.get('/location/settings');
       final settings = res.data['settings'];
-      _horarioInicio = settings['horarioInicio'] ?? '07:00';
-      _horarioFin = settings['horarioFin'] ?? '17:00';
+      _horarioInicio = settings['horarioInicio'] ?? '05:00';
+      _horarioFin = settings['horarioFin'] ?? '22:00';
     } catch (_) {}
   }
 
