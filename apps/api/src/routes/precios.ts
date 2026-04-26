@@ -24,7 +24,7 @@ router.get("/", requireRole("Root", "Administrador", "Secretaria"), async (_req,
 
 router.get("/cliente/:clienteId", async (req, res) => {
   try {
-    const clienteId = req.params.clienteId;
+    const clienteId = req.params.clienteId as string;
     const [preciosIndividuales, cliente] = await Promise.all([
       prisma.precioCliente.findMany({
         where: { clienteId, vigente: true },

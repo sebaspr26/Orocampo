@@ -51,7 +51,7 @@ router.put("/:id", async (req, res) => {
   const { nombre, descripcion } = req.body;
   try {
     const tipo = await prisma.tipoCliente.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { nombre, descripcion },
       include: {
         precios: { include: { productType: { select: { id: true, name: true } } } },
@@ -67,14 +67,15 @@ router.put("/:id", async (req, res) => {
 // DELETE /tipos-cliente/:id
 router.delete("/:id", async (req, res) => {
   try {
-    const count = await prisma.cliente.count({ where: { tipoClienteId: req.params.id } });
+    const tipoId = req.params.id as string;
+    const count = await prisma.cliente.count({ where: { tipoClienteId: tipoId } });
     if (count > 0) {
       res.status(400).json({ error: `No se puede eliminar: ${count} cliente(s) asignado(s)` });
       return;
     }
     await Promise.all([
-      prisma.precioTipo.deleteMany({ where: { tipoClienteId: req.params.id } }),
-      prisma.tipoCliente.update({ where: { id: req.params.id }, data: { isActive: false } }),
+      prisma.precioTipo.deleteMany({ where: { tipoClienteId: tipoId } }),
+      prisma.tipoCliente.update({ where: { id: tipoId }, data: { isActive: false } }),
     ]);
     res.json({ ok: true });
   } catch {
@@ -105,7 +106,7 @@ router.post("/:id/precios", async (req: AuthRequest, res) => {
 // DELETE /tipos-cliente/:id/precios/:precioId
 router.delete("/:id/precios/:precioId", async (req, res) => {
   try {
-    await prisma.precioTipo.delete({ where: { id: req.params.precioId } });
+    await prisma.precioTipo.delete({ where: { id: req.params.precioId as string } });
     res.json({ ok: true });
   } catch {
     res.status(500).json({ error: "Error al eliminar precio" });

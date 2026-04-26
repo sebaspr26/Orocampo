@@ -78,25 +78,24 @@ router.put("/:id", requireRole("Root", "Administrador"), async (req, res) => {
       if (nombre) updateData.nombre = nombre;
       if (domiciliarioId) updateData.domiciliarioId = domiciliarioId;
 
-      await tx.ruta.update({ where: { id: req.params.id }, data: updateData });
+      const rutaId = req.params.id as string;
+      await tx.ruta.update({ where: { id: rutaId }, data: updateData });
 
       if (clienteIds !== undefined) {
-        // Quitar clientes que estaban en esta ruta pero ya no están
         await tx.cliente.updateMany({
-          where: { rutaId: req.params.id, id: { notIn: clienteIds } },
+          where: { rutaId, id: { notIn: clienteIds } },
           data: { rutaId: null },
         });
-        // Asignar los nuevos clientes a esta ruta
         if (clienteIds.length) {
           await tx.cliente.updateMany({
             where: { id: { in: clienteIds } },
-            data: { rutaId: req.params.id },
+            data: { rutaId },
           });
         }
       }
 
       return tx.ruta.findUnique({
-        where: { id: req.params.id },
+        where: { id: rutaId },
         include: {
           domiciliario: { select: { id: true, name: true, email: true } },
           clientes: { select: { id: true, nombre: true, telefono: true, direccion: true, isActive: true } },
@@ -113,8 +112,9 @@ router.put("/:id", requireRole("Root", "Administrador"), async (req, res) => {
 router.delete("/:id", requireRole("Root", "Administrador"), async (req, res) => {
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.cliente.updateMany({ where: { rutaId: req.params.id }, data: { rutaId: null } });
-      await tx.ruta.update({ where: { id: req.params.id }, data: { isActive: false } });
+      const rutaId = req.params.id as string;
+      await tx.cliente.updateMany({ where: { rutaId }, data: { rutaId: null } });
+      await tx.ruta.update({ where: { id: rutaId }, data: { isActive: false } });
     });
     res.json({ ok: true });
   } catch {
