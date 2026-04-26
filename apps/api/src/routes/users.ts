@@ -68,7 +68,7 @@ router.post("/", requireAuth, requireRole("Root"), async (req: AuthRequest, res:
 });
 
 router.put("/:id", requireAuth, requireRole("Root"), async (req: AuthRequest, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const parsed = updateUserSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Datos inválidos" });

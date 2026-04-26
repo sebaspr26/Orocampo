@@ -31,7 +31,7 @@ router.put("/:id", requireAuth, requireRole("Administrador", "Secretaria"), asyn
   const parsed = createSchema.partial().safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Datos inválidos" }); return; }
 
-  const productType = await prisma.productType.update({ where: { id: req.params.id as string }, data: parsed.data });
+  const productType = await prisma.productType.update({ where: { id: req.params.id as string }, data: parsed.data as Record<string, unknown> });
   res.json({ productType });
 });
 
