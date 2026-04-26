@@ -16,6 +16,7 @@ import preciosRouter from "./routes/precios";
 import tiposClienteRouter from "./routes/tipos-cliente";
 import cajaRouter from "./routes/caja";
 import motosRouter from "./routes/motos";
+import locationRouter from "./routes/location";
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use("/precios", preciosRouter);
 app.use("/tipos-cliente", tiposClienteRouter);
 app.use("/caja", cajaRouter);
 app.use("/motos", motosRouter);
+app.use("/location", locationRouter);
 
 if (process.env.VERCEL !== "1") {
   const PORT = process.env.PORT ?? 4001;

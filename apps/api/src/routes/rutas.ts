@@ -6,6 +6,24 @@ const router = Router();
 
 router.use(requireAuth);
 
+// GET /rutas/me - ruta del domiciliario autenticado
+router.get("/me", requireRole("Domiciliario"), async (req: AuthRequest, res) => {
+  try {
+    const ruta = await prisma.ruta.findFirst({
+      where: { domiciliarioId: req.user!.id, isActive: true },
+      include: {
+        clientes: {
+          where: { isActive: true },
+          select: { id: true, nombre: true, telefono: true, direccion: true },
+        },
+      },
+    });
+    res.json({ ruta });
+  } catch {
+    res.status(500).json({ error: "Error al obtener ruta" });
+  }
+});
+
 // GET /rutas - lista todas las rutas
 router.get("/", requireRole("Root", "Administrador", "Secretaria"), async (_req, res) => {
   try {

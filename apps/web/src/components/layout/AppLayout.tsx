@@ -35,6 +35,7 @@ const adminNavItems: NavItem[] = [
   { href: "/rutas", label: "Rutas", icon: "route", roles: ["Administrador"] },
   { href: "/productos", label: "Productos", icon: "egg_alt", roles: ["Administrador"] },
   { href: "/admin/motos", label: "Motos", icon: "two_wheeler", roles: ["Administrador"] },
+  { href: "/tracking", label: "Rastreo", icon: "my_location", roles: ["Administrador"] },
   { href: "/reportes", label: "Reportes", icon: "analytics", roles: ["Administrador"] },
 ];
 
@@ -50,6 +51,7 @@ const secretariaNavItems: NavItem[] = [
   { href: "/caja", label: "Cierre de Caja", icon: "point_of_sale", roles: ["Secretaria"] },
   { href: "/rutas", label: "Rutas", icon: "route", roles: ["Secretaria"] },
   { href: "/productos", label: "Productos", icon: "egg_alt", roles: ["Secretaria"] },
+  { href: "/tracking", label: "Rastreo", icon: "my_location", roles: ["Secretaria"] },
 ];
 
 const domiciliarioNavItems: NavItem[] = [

@@ -18,17 +18,18 @@ model Role {
 }
 
 model User {
-  id                String   @id @default(cuid())
+  id                String     @id @default(cuid())
   name              String?
-  email             String   @unique
+  email             String     @unique
   password          String
   roleId            String?
-  role              Role?    @relation(fields: [roleId], references: [id])
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  ventasCreadas     Venta[]  @relation("VentaCreador")
-  rutasDomiciliario Ruta[]   @relation("RutaDomiciliario")
+  role              Role?      @relation(fields: [roleId], references: [id])
+  isActive          Boolean    @default(true)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  ventasCreadas     Venta[]    @relation("VentaCreador")
+  rutasDomiciliario Ruta[]     @relation("RutaDomiciliario")
+  locations         Location[]
 }
 
 model ProductType {
@@ -256,6 +257,23 @@ model CorteCaja {
   estado             String   @default("CERRADO")
   createdById        String
   createdAt          DateTime @default(now())
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model AppSettings {
+  id            String @id @default("global")
+  horarioInicio String @default("07:00")
+  horarioFin    String @default("17:00")
 }
 
 model Moto {
