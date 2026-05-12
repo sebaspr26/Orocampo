@@ -10,6 +10,7 @@ class ConnectivityProvider extends ChangeNotifier {
 
   void init() {
     _isOnline = ConnectivityService.instance.isOnline;
+    notifyListeners();
     _sub = ConnectivityService.instance.onStatusChange.listen((online) {
       _isOnline = online;
       notifyListeners();

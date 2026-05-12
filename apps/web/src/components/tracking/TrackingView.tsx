@@ -33,7 +33,8 @@ function timeAgo(dateStr: string) {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (diff < 60) return `hace ${diff}s`;
   if (diff < 3600) return `hace ${Math.floor(diff / 60)}min`;
-  return `hace ${Math.floor(diff / 3600)}h`;
+  if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`;
+  return `hace ${Math.floor(diff / 86400)}d`;
 }
 
 export default function TrackingView() {
@@ -47,7 +48,7 @@ export default function TrackingView() {
   const [locations, setLocations] = useState<DomiciliarioLocation[]>([]);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryPoint[]>([]);
-  const [settings, setSettings] = useState({ horarioInicio: "05:00", horarioFin: "22:00" });
+  const [settings, setSettings] = useState({ horarioInicio: "00:00", horarioFin: "23:59" });
   const [editingSettings, setEditingSettings] = useState(false);
   const [refreshCooldown, setRefreshCooldown] = useState(false);
   const leafletLoaded = useRef(false);
@@ -113,9 +114,11 @@ export default function TrackingView() {
     function initMap() {
       if (!mapRef.current || mapInstance.current) return;
       const L = (window as any).L; // eslint-disable-line @typescript-eslint/no-explicit-any
-      const map = L.map(mapRef.current).setView([4.6097, -74.0817], 13);
+      const map = L.map(mapRef.current, { maxZoom: 19 }).setView([4.6097, -74.0817], 19);
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap",
+        maxNativeZoom: 18,
+        maxZoom: 19,
       }).addTo(map);
       mapInstance.current = map;
     }
@@ -172,7 +175,7 @@ export default function TrackingView() {
     const withLoc = locations.filter((l) => l.location);
     if (withLoc.length && !selectedUser) {
       const bounds = L.latLngBounds(withLoc.map((l) => [l.location!.lat, l.location!.lng]));
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 19 });
     }
   }, [locations, selectedUser, fetchHistory]);
 
@@ -249,7 +252,7 @@ export default function TrackingView() {
       )}
 
       {/* Mapa */}
-      <div className="relative rounded-[2rem] overflow-hidden border border-[#1c1b1b]/[0.06] bg-white" style={{ height: "65vh" }}>
+      <div className="relative rounded-[2rem] overflow-hidden border border-[#1c1b1b]/[0.06] bg-white" style={{ height: "65vh", zIndex: 0 }}>
         <div ref={mapRef} className="w-full h-full" />
         <button
           onClick={manualRefresh}

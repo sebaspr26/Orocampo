@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:latlong2/latlong.dart' hide Path;
 import '../../config/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -61,10 +61,26 @@ class _AdminTrackingState extends State<AdminTracking> {
           updatedAt: loc != null ? DateTime.parse(loc['createdAt']) : null,
         );
       }).toList();
-      if (mounted) setState(() { _locations = list; _loading = false; });
+      if (mounted) {
+        setState(() { _locations = list; _loading = false; });
+        _fitToMarkers(list);
+      }
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  void _fitToMarkers(List<_DomiciliarioLocation> locs) {
+    final withLoc = locs.where((l) => l.lat != null).toList();
+    if (withLoc.isEmpty || _selectedUserId != null) return;
+    if (withLoc.length == 1) {
+      _mapController.move(LatLng(withLoc.first.lat!, withLoc.first.lng!), 19);
+      return;
+    }
+    final bounds = LatLngBounds.fromPoints(
+      withLoc.map((l) => LatLng(l.lat!, l.lng!)).toList(),
+    );
+    _mapController.fitCamera(CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(50), maxZoom: 19));
   }
 
   Future<void> _fetchHistory(String userId, String name) async {
@@ -105,7 +121,8 @@ class _AdminTrackingState extends State<AdminTracking> {
     final diff = DateTime.now().difference(dt);
     if (diff.inSeconds < 60) return 'hace ${diff.inSeconds}s';
     if (diff.inMinutes < 60) return 'hace ${diff.inMinutes}min';
-    return 'hace ${diff.inHours}h';
+    if (diff.inHours < 24) return 'hace ${diff.inHours}h';
+    return 'hace ${diff.inDays}d';
   }
 
   @override
@@ -127,11 +144,13 @@ class _AdminTrackingState extends State<AdminTracking> {
               children: [
                 FlutterMap(
                   mapController: _mapController,
-                  options: MapOptions(initialCenter: center, initialZoom: 13),
+                  options: MapOptions(initialCenter: center, initialZoom: 19, maxZoom: 19),
                   children: [
                     TileLayer(
                       urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'com.orocampo.mobile',
+                      maxNativeZoom: 18,
+                      maxZoom: 19,
                     ),
                     if (_routeHistory.length > 1)
                       PolylineLayer(polylines: [
