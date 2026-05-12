@@ -36,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    LocationService.instance.stop();
     super.dispose();
   }
 

@@ -101,4 +101,35 @@ router.get("/:userId/history", requireRole("Root", "Administrador", "Secretaria"
   }
 });
 
+// GET /location/ventas-geo — ventas del día con coordenadas
+router.get("/ventas-geo", requireRole("Root", "Administrador", "Secretaria"), async (_req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const ventas = await prisma.venta.findMany({
+      where: {
+        createdAt: { gte: today },
+        lat: { not: null },
+        lng: { not: null },
+      },
+      select: {
+        id: true,
+        lat: true,
+        lng: true,
+        total: true,
+        createdAt: true,
+        cliente: { select: { nombre: true } },
+        createdBy: { select: { id: true, name: true } },
+        items: { select: { productType: { select: { name: true } }, cantidadKg: true } },
+      },
+      orderBy: { createdAt: "asc" },
+    });
+
+    res.json({ ventas });
+  } catch {
+    res.status(500).json({ error: "Error al obtener ventas geolocalizadas" });
+  }
+});
+
 export default router;

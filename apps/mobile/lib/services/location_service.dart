@@ -8,39 +8,49 @@ class LocationService {
 
   LocationService._();
 
-  Timer? _timer;
+  StreamSubscription<Position>? _positionSub;
   bool _running = false;
 
   bool get isRunning => _running;
 
-  Future<bool> _checkPermissions() async {
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return false;
-    }
-    if (permission == LocationPermission.deniedForever) return false;
-
-    if (!await Geolocator.isLocationServiceEnabled()) return false;
-    return true;
-  }
-
   Future<void> start() async {
     if (_running) return;
 
-    final hasPermission = await _checkPermissions();
-    if (!hasPermission) return;
+    try {
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return;
+      }
+      if (permission == LocationPermission.deniedForever) return;
+      if (!await Geolocator.isLocationServiceEnabled()) return;
 
-    _running = true;
-    _sendLocation();
-    _timer = Timer.periodic(const Duration(seconds: 15), (_) => _sendLocation());
+      _running = true;
+
+      final androidSettings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        intervalDuration: const Duration(seconds: 15),
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationTitle: 'OROCAMPO',
+          notificationText: 'Rastreo de ubicación activo',
+          enableWakeLock: true,
+          setOngoing: true,
+          notificationChannelName: 'Rastreo de ubicación',
+        ),
+      );
+
+      _positionSub = Geolocator.getPositionStream(
+        locationSettings: androidSettings,
+      ).listen((position) {
+        _sendLocation(position);
+      });
+    } catch (_) {
+      _running = false;
+    }
   }
 
-  Future<void> _sendLocation() async {
+  Future<void> _sendLocation(Position position) async {
     try {
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, timeLimit: Duration(seconds: 10)),
-      );
       await ApiService.instance.post('/location', data: {
         'lat': position.latitude,
         'lng': position.longitude,
@@ -49,8 +59,8 @@ class LocationService {
   }
 
   void stop() {
-    _timer?.cancel();
-    _timer = null;
+    _positionSub?.cancel();
+    _positionSub = null;
     _running = false;
   }
 }

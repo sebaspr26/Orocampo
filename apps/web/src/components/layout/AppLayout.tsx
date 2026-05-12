@@ -129,12 +129,12 @@ export default function AppLayout({
   if (isRoot) {
     return (
       <div className="flex min-h-screen bg-[#fcf9f8]">
-        <aside className="h-screen w-72 rounded-r-[2rem] sticky top-0 left-0 flex flex-col gap-2 p-6 bg-white shadow-[1px_0_32px_rgba(28,27,27,0.06)] border-r border-[#1c1b1b]/[0.055] z-40 shrink-0">
-          <div className="mb-8 px-4">
+        <aside className="h-screen w-72 rounded-r-[2rem] sticky top-0 left-0 flex flex-col gap-2 p-6 bg-white shadow-[1px_0_32px_rgba(28,27,27,0.06)] border-r border-[#1c1b1b]/[0.055] z-40 shrink-0 overflow-y-auto">
+          <div className="mb-8 px-4 shrink-0">
             <BrandMark subtitle="Sistema de Gestión" />
           </div>
 
-          <nav className="flex flex-col gap-0.5 flex-grow">
+          <nav className="flex flex-col gap-0.5 flex-grow overflow-y-auto">
             {visibleItems.map((item) => (
               <Link
                 key={item.href}
@@ -155,7 +155,7 @@ export default function AppLayout({
             ))}
           </nav>
 
-          <div className="mt-auto pt-5 border-t border-[#1c1b1b]/[0.05]">
+          <div className="mt-auto pt-5 border-t border-[#1c1b1b]/[0.05] shrink-0">
             <UserCard user={user} initials={initials} />
           </div>
         </aside>
@@ -178,12 +178,12 @@ export default function AppLayout({
   // ── Operational Layout ──────────────────────────────────────────────────────
 
   const SidebarContent = () => (
-    <div className="flex flex-col gap-2 p-6 h-full">
-      <div className="mb-8">
+    <div className="flex flex-col gap-2 p-6 h-full overflow-y-auto">
+      <div className="mb-8 shrink-0">
         <BrandMark subtitle="Distribución Premium" />
       </div>
 
-      <nav className="flex-1 flex flex-col gap-0.5">
+      <nav className="flex-1 flex flex-col gap-0.5 overflow-y-auto">
         {visibleItems.map((item) => (
           <Link
             key={item.href}
@@ -205,7 +205,7 @@ export default function AppLayout({
         ))}
       </nav>
 
-      <div className="mt-auto flex flex-col gap-2 pt-5 border-t border-[#1c1b1b]/[0.05]">
+      <div className="mt-auto flex flex-col gap-2 pt-5 border-t border-[#1c1b1b]/[0.05] shrink-0">
         {["Administrador", "Secretaria"].includes(user.role) && (
           <Link
             href="/ventas"
@@ -222,7 +222,7 @@ export default function AppLayout({
 
   return (
     <div className="flex min-h-screen bg-[#fcf9f8]">
-      <aside className="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-white border-r border-[#1c1b1b]/[0.055] z-50">
+      <aside className="hidden md:flex h-screen w-64 fixed left-0 top-0 flex-col bg-white border-r border-[#1c1b1b]/[0.055] z-50 overflow-y-auto">
         <SidebarContent />
       </aside>
 

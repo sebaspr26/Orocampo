@@ -37,7 +37,7 @@ router.get("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario
 
 // POST /ventas
 router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliario"), async (req: AuthRequest, res: Response) => {
-  const { clienteId, metodoPago, notas, items } = req.body;
+  const { clienteId, metodoPago, notas, items, lat, lng } = req.body;
 
   if (!clienteId || !metodoPago || !items || items.length === 0) {
     res.status(400).json({ error: "Datos incompletos: clienteId, metodoPago e items son requeridos" });
@@ -61,6 +61,8 @@ router.post("/", requireRole("Root", "Administrador", "Secretaria", "Domiciliari
           estado,
           total,
           notas,
+          lat: lat != null ? Number(lat) : null,
+          lng: lng != null ? Number(lng) : null,
           createdById: req.user!.id,
           items: {
             create: items.map((item: { productTypeId: string; cantidadKg: number; precioUnitario: number }) => ({

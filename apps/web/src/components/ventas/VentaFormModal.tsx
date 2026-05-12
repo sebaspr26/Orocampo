@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import SearchableSelect from "@/components/ui/SearchableSelect";
 
 interface Cliente { id: string; nombre: string; esMostrador?: boolean; }
@@ -41,6 +41,15 @@ export default function VentaFormModal({ clientes, mostrador, productTypes, user
   const [preciosEspeciales, setPreciosEspeciales] = useState<Record<string, number>>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const geoRef = useRef<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    navigator.geolocation?.getCurrentPosition(
+      (pos) => { geoRef.current = { lat: pos.coords.latitude, lng: pos.coords.longitude }; },
+      () => {},
+      { enableHighAccuracy: true, timeout: 5000 }
+    );
+  }, []);
 
   const total = items.reduce((sum, i) => sum + i.cantidadKg * i.precioUnitario, 0);
 
@@ -103,7 +112,7 @@ export default function VentaFormModal({ clientes, mostrador, productTypes, user
       const res = await fetch("/api/ventas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clienteId: efectiveClienteId, metodoPago, notas, items }),
+        body: JSON.stringify({ clienteId: efectiveClienteId, metodoPago, notas, items, lat: geoRef.current?.lat, lng: geoRef.current?.lng }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Error al guardar"); return; }

@@ -18,7 +18,13 @@ class DbService {
     final path = join(await getDatabasesPath(), 'orocampo.db');
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE ventas ADD COLUMN lat REAL');
+          await db.execute('ALTER TABLE ventas ADD COLUMN lng REAL');
+        }
+      },
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE sync_queue (
@@ -61,6 +67,8 @@ class DbService {
             total REAL NOT NULL,
             estado TEXT NOT NULL DEFAULT 'PENDIENTE',
             notas TEXT,
+            lat REAL,
+            lng REAL,
             items_json TEXT NOT NULL,
             created_at INTEGER NOT NULL,
             sync_status TEXT DEFAULT 'pending'

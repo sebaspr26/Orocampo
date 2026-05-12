@@ -131,6 +131,8 @@ model Venta {
   estado      String       @default("PENDIENTE")
   total       Float
   notas       String?
+  lat         Float?
+  lng         Float?
   createdById String
   createdBy   User         @relation("VentaCreador", fields: [createdById], references: [id])
   createdAt   DateTime     @default(now())

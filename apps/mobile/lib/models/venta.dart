@@ -38,6 +38,8 @@ class Venta {
   final double total;
   final String estado;
   final String? notas;
+  final double? lat;
+  final double? lng;
   final List<VentaItem> items;
   final DateTime createdAt;
   final String syncStatus;
@@ -51,6 +53,8 @@ class Venta {
     required this.total,
     this.estado = 'PENDIENTE',
     this.notas,
+    this.lat,
+    this.lng,
     required this.items,
     required this.createdAt,
     this.syncStatus = 'pending',
@@ -65,6 +69,8 @@ class Venta {
     total: (row['total'] as num).toDouble(),
     estado: row['estado'],
     notas: row['notas'],
+    lat: row['lat'] != null ? (row['lat'] as num).toDouble() : null,
+    lng: row['lng'] != null ? (row['lng'] as num).toDouble() : null,
     items: (jsonDecode(row['items_json']) as List).map((e) => VentaItem.fromJson(e)).toList(),
     createdAt: DateTime.fromMillisecondsSinceEpoch(row['created_at']),
     syncStatus: row['sync_status'],
@@ -79,6 +85,8 @@ class Venta {
     'total': total,
     'estado': estado,
     'notas': notas,
+    'lat': lat,
+    'lng': lng,
     'items_json': jsonEncode(items.map((e) => e.toJson()).toList()),
     'created_at': createdAt.millisecondsSinceEpoch,
     'sync_status': syncStatus,
@@ -89,6 +97,8 @@ class Venta {
     'clienteId': clienteId,
     'metodoPago': metodoPago,
     'notas': notas,
+    'lat': lat,
+    'lng': lng,
     'items': items.map((e) => {
       'productTypeId': e.productTypeId,
       'cantidadKg': e.cantidadKg,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:uuid/uuid.dart';
 import '../models/venta.dart';
 import '../models/cliente.dart';
@@ -81,6 +82,17 @@ class VentasProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<Position?> _getCurrentPosition() async {
+    try {
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) return null;
+      if (!await Geolocator.isLocationServiceEnabled()) return null;
+      return await Geolocator.getCurrentPosition(locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, timeLimit: Duration(seconds: 5)));
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<Venta> createVenta({
     required String clienteId,
     required String clienteNombre,
@@ -88,6 +100,7 @@ class VentasProvider extends ChangeNotifier {
     required List<VentaItem> items,
     String? notas,
   }) async {
+    final position = await _getCurrentPosition();
     final total = items.fold<double>(0, (sum, i) => sum + i.subtotal);
     final venta = Venta(
       id: _uuid.v4(),
@@ -97,6 +110,8 @@ class VentasProvider extends ChangeNotifier {
       total: total,
       items: items,
       notas: notas,
+      lat: position?.latitude,
+      lng: position?.longitude,
       createdAt: DateTime.now(),
     );
 

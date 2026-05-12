@@ -14,6 +14,17 @@ interface HistoryPoint {
   createdAt: string;
 }
 
+interface VentaGeo {
+  id: string;
+  lat: number;
+  lng: number;
+  total: number;
+  createdAt: string;
+  cliente: { nombre: string };
+  createdBy: { id: string; name: string };
+  items: { productType: { name: string }; cantidadKg: number }[];
+}
+
 const MARKER_COLORS = [
   "#E53935", // rojo
   "#1E88E5", // azul
@@ -48,6 +59,9 @@ export default function TrackingView() {
   const [locations, setLocations] = useState<DomiciliarioLocation[]>([]);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryPoint[]>([]);
+  const [ventasGeo, setVentasGeo] = useState<VentaGeo[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ventaMarkersRef = useRef<any[]>([]);
   const [settings, setSettings] = useState({ horarioInicio: "00:00", horarioFin: "23:59" });
   const [editingSettings, setEditingSettings] = useState(false);
   const [refreshCooldown, setRefreshCooldown] = useState(false);
@@ -64,7 +78,7 @@ export default function TrackingView() {
   const manualRefresh = useCallback(async () => {
     if (refreshCooldown) return;
     setRefreshCooldown(true);
-    await fetchLocations();
+    await Promise.all([fetchLocations(), fetchVentasGeo()]);
     setTimeout(() => setRefreshCooldown(false), 3000);
   }, [refreshCooldown, fetchLocations]);
 
@@ -74,6 +88,14 @@ export default function TrackingView() {
       const data = await res.json();
       setHistory(data.history ?? []);
       setSelectedUser(userId);
+    } catch {}
+  }, []);
+
+  const fetchVentasGeo = useCallback(async () => {
+    try {
+      const res = await fetch("/api/location/ventas-geo");
+      const data = await res.json();
+      setVentasGeo(data.ventas ?? []);
     } catch {}
   }, []);
 
@@ -133,9 +155,10 @@ export default function TrackingView() {
   useEffect(() => {
     fetchLocations();
     fetchSettings();
-    const interval = setInterval(fetchLocations, 10_000);
+    fetchVentasGeo();
+    const interval = setInterval(() => { fetchLocations(); fetchVentasGeo(); }, 10_000);
     return () => clearInterval(interval);
-  }, [fetchLocations, fetchSettings]);
+  }, [fetchLocations, fetchSettings, fetchVentasGeo]);
 
   // Update markers
   useEffect(() => {
@@ -199,6 +222,56 @@ export default function TrackingView() {
     }
   }, [history, selectedUser, locations]);
 
+  // Draw venta markers
+  useEffect(() => {
+    const L = (window as any).L; // eslint-disable-line @typescript-eslint/no-explicit-any
+    const map = mapInstance.current;
+    if (!L || !map) return;
+
+    ventaMarkersRef.current.forEach((m) => m.remove());
+    ventaMarkersRef.current = [];
+
+    const fmt = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+
+    ventasGeo.forEach((v) => {
+      const domIndex = locations.findIndex((l) => l.userId === v.createdBy.id);
+      const color = domIndex >= 0 ? colorFor(domIndex) : "#735c00";
+      const itemsText = v.items.map((i) => `${i.productType.name} ${i.cantidadKg}kg`).join(", ");
+      const hora = new Date(v.createdAt).toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+
+      const marker = L.marker([v.lat, v.lng], {
+        icon: L.divIcon({
+          className: "",
+          html: `<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer">
+            <div style="background:${color};padding:5px 10px;border-radius:12px;box-shadow:0 2px 10px ${color}55;font-size:11px;white-space:nowrap;display:flex;align-items:center;gap:6px;max-width:220px">
+              <div style="width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <span style="font-size:11px;color:#fff">$</span>
+              </div>
+              <div style="overflow:hidden">
+                <div style="font-weight:800;color:#fff;font-size:11px;line-height:1.2;text-overflow:ellipsis;overflow:hidden">${v.cliente.nombre}</div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.7);line-height:1.2">${fmt.format(v.total)} · ${hora}</div>
+              </div>
+            </div>
+            <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid ${color};margin-top:-1px"></div>
+          </div>`,
+          iconSize: [220, 55],
+          iconAnchor: [110, 55],
+        }),
+      }).addTo(map);
+
+      marker.bindPopup(`
+        <div style="font-family:sans-serif;font-size:12px;min-width:160px">
+          <div style="font-weight:800;font-size:13px;color:#1c1b1b;margin-bottom:4px">${v.cliente.nombre}</div>
+          <div style="color:#7f7663;margin-bottom:4px">${itemsText}</div>
+          <div style="font-weight:700;color:${color}">${fmt.format(v.total)}</div>
+          <div style="color:#7f7663;font-size:10px;margin-top:4px">Por: ${v.createdBy.name ?? "?"} · ${hora}</div>
+        </div>
+      `, { closeButton: false, className: "venta-popup" });
+
+      ventaMarkersRef.current.push(marker);
+    });
+  }, [ventasGeo, locations]);
+
   const withLocation = locations.filter((l) => l.location);
   const selectedName = locations.find((l) => l.userId === selectedUser)?.name;
   const selectedIndex = locations.findIndex((l) => l.userId === selectedUser);
@@ -248,6 +321,17 @@ export default function TrackingView() {
           >
             <span className="material-symbols-outlined" style={{ fontSize: "1.125rem" }}>close</span>
           </button>
+        </div>
+      )}
+
+      {/* Ventas geolocalizadas */}
+      {ventasGeo.length > 0 && (
+        <div className="flex items-center gap-3 bg-white rounded-2xl p-4 border border-[#1c1b1b]/[0.06]">
+          <span className="material-symbols-outlined text-[#735c00]" style={{ fontSize: "1.25rem" }}>point_of_sale</span>
+          <span className="text-sm font-semibold text-[#1c1b1b]">
+            {ventasGeo.length} venta{ventasGeo.length !== 1 ? "s" : ""} registrada{ventasGeo.length !== 1 ? "s" : ""} hoy
+          </span>
+          <span className="text-xs text-[#7f7663]">con ubicación</span>
         </div>
       )}
 

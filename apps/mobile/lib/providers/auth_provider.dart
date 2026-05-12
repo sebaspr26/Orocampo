@@ -4,6 +4,7 @@ import '../models/user.dart';
 import '../services/auth_service.dart';
 import '../services/api_service.dart';
 import '../services/db_service.dart';
+import '../services/location_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   User? _user;
@@ -73,7 +74,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    // Notificar al backend para liberar la sesión móvil
+    LocationService.instance.stop();
     try {
       await ApiService.instance.post('/auth/logout');
     } catch (_) {}
